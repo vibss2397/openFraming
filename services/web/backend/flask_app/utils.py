@@ -214,6 +214,53 @@ class Validate:
             )
 
         return table
+    @classmethod
+    def spreadsheet_and_get_table2(cls, file_: FileStorage) -> T.List[T.List[str]]:
+        """Check if file_ is a valid csv,xls, xlsx, xlsm, xlsb, or odf
+            file and returns the contents.
+
+            This depends on whatever Flask says is the mimetype, which only checks
+            HTTP headers and the file extension(doesn't inspect
+
+        Args:
+            file_: A file object.
+
+        Returns:
+            table: A list of list of strings.
+
+        Raises:
+            BadRequest:
+        """
+
+        # Something in the combination of the Python version used (3.8.3), and the fact
+        # that it is containerized(run inside Docker) neccesitates this.
+        try:
+            df: pd.DataFrame = pd.read_csv(file_, na_filter=False, header=None, encoding='utf-8')  # type: ignore
+        except UnicodeDecodeError:
+            try:
+                df: pd.DataFrame = pd.read_excel(file_, na_filter=False, header=None, encoding='utf-8')  # type: ignore
+            except UnicodeDecodeError:
+                raise BadRequest(
+                "The uploaded file type could not be inferred."
+                " Perhaps using a different browser might help."
+                )
+            except BaseException:
+                raise BadRequest("The uploaded spreadsheet could not be parsed.")
+            except Exception as e:
+                current_app.logger.info(f"Invalid excel file: {e}")
+                raise BadRequest("Uploaded text file is not in valid .xls format.")
+            
+        except BaseException:
+                raise BadRequest("The uploaded spreadsheet could not be parsed.")
+        except Exception as e:
+                current_app.logger.info(f"Invalid CSV file: {e}")
+                raise BadRequest("Uploaded text file is not in valid CSV format.")
+        table: T.List[T.List[str]] = df.to_numpy().tolist()  # type: ignore
+        if table == []:
+            raise BadRequest("An empty file was uploaded.")
+        # strip blanks
+        table = [[cell.strip() for cell in row] for row in table]
+        return table
 
     @classmethod
     def table_has_headers(
