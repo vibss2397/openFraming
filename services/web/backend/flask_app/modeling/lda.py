@@ -13,9 +13,8 @@ from gensim.models import CoherenceModel  # type: ignore
 from nltk.corpus import stopwords  # type: ignore
 from nltk.stem.wordnet import WordNetLemmatizer  # type: ignore
 
-from flask_app.settings import Settings
-
-
+# from flask_app.settings import Settings
+from modeling.settings2 import Settings
 EXCEL_EXTENSIONS = {"xlsx", "xls"}
 CSV_EXTENSIONS = {"csv"}
 TSV_EXTENSIONS = {"tsv"}
@@ -33,12 +32,12 @@ class TopicModelMetricsJson(TT.TypedDict):
 
 
 class LDAPreprocessingOptions(TT.TypedDict, total=False):
-    remove_phrases: str
-    join_phrases: str
-    remove_punctuation_and_digits: str
-    remove_stopwords: str
-    lemmatize_content: str
-    remove_short_words: str
+    remove_phrases: bool
+    join_phrases: bool
+    remove_punctuation_and_digits: bool
+    remove_stopwords: bool
+    lemmatize_content: bool
+    remove_short_words: bool
 
 
 class Corpus(object):
@@ -77,7 +76,6 @@ class Corpus(object):
                 opposed to being set to False explicitly), that preprocessing option
                 will be executed.
             """
-
         file_path = Path(file_name)
 
         if not file_path.exists():
@@ -99,21 +97,23 @@ class Corpus(object):
         self.df_docs = doc_reader(file_name)
         self.id_column_name = id_column_name
         self.content_column_name = content_column_name
-
+        
+        self.processing_to_do = processing_to_do
         self.phrases_to_join = phrases_to_join
+        if(len(self.phrases_to_join)>0): self.processing_to_do['join_phrases'] =  True
         self.language = language
         self.phrases_to_remove = phrases_to_remove
+        if(len(self.phrases_to_remove)>0): self.processing_to_do['remove_phrases'] = True
         self.dont_stem = dont_stem
 
-        self.min_word_length = min_word_length
-        self.processing_to_do = processing_to_do
-
+        self.min_word_length = min_word_length        
+        # self.processing_to_do['join_phrases'] = True
         punctuation_no_underscore = set(string.punctuation)
         punctuation_no_underscore.add("’")
         punctuation_no_underscore.add("”")
         punctuation_no_underscore.remove("_")
         self.punctuation = punctuation_no_underscore | extra_punctuation
-
+        self.processing_to_do['remove_punctuation_and_digits'] = True
         self.df_docs[Settings.STEMMED_CONTENT_COL] = self.df_docs[
             self.content_column_name
         ].apply(lambda b: b.lower())
@@ -124,11 +124,14 @@ class Corpus(object):
             raise ValueError(
                 "No stopwords exist for language {}!".format(self.language)
             )
+        self.processing_to_do['remove_stopwords'] = True
+        if(language=='english'):
+            self.processing_to_do.get('lemmatize_content', True)
+            self.processing_to_do.get('remove_short_words', True)
 
         self.stopwords += extra_stopwords
-
         preprocessing_completed = []
-
+        print(self.processing_to_do)
         # Figure out if the user meant to remove phrases by checking
         # if they provided phrases to remove
         remove_phrases_default = phrases_to_remove != []
@@ -136,14 +139,15 @@ class Corpus(object):
             self.remove_phrases()
             preprocessing_completed.append("Removed phrases")
 
-        if self.processing_to_do.get("join_phrases", True):
+        if self.processing_to_do.get("join_phrases"):
             self.join_phrases()
             preprocessing_completed.append("Joined phrases")
 
-        if self.processing_to_do.get("remove_punctuation_and_digits", True):
+        if self.processing_to_do.get("remove_punctuation_and_digits"):
             self.remove_punctuation_and_digits_and_tokenize()
             preprocessing_completed.append("Removed punctuation and digits")
         else:
+            print('here')
             self.tokenize_content()
             preprocessing_completed.append("Tokenized content")
 
@@ -161,6 +165,7 @@ class Corpus(object):
             preprocessing_completed.append("Removed short words")
 
         self.preprocessing_completed = preprocessing_completed
+        print(self.preprocessing_completed)
 
     def what_preprocessing_was_completed(self) -> T.List[str]:
         return self.preprocessing_completed
