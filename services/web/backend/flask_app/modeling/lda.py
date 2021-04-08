@@ -303,14 +303,13 @@ class LDAModeler(object):
         float, T.List[T.List[str]], T.Any, T.Iterator[T.List[T.Tuple[int, float]]]
     ]:
         self.num_topics = num_topics
-
         mallet_path = Path(self.mallet_bin_directory) / "mallet"
         if not mallet_path.exists():
             raise Exception(
                 f"Could not find a file named 'mallet' {str(self.mallet_bin_directory)}. Are"
                 " you sure you installed Mallet and set MALLET_BIN_DIRECTORY correctly?"
             )
-        self.lda_model = models.wrappers.LdaMallet(
+        self.lda_model = models.wrappers.LdaMallet( 
             str(mallet_path),
             corpus=self.corpus_bow,
             num_topics=num_topics,
