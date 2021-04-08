@@ -1153,7 +1153,7 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
     app = Flask(__name__)
 
     # app.config["SERVER_NAME"] = Settings.SERVER_NAME
-    app.config["SERVER_NAME"] = "0.0.0.0:5000"
+    # app.config["SERVER_NAME"] = "0.0.0.0:5000"
     # Create project root if necessary
     if not Settings.PROJECT_DATA_DIRECTORY.exists():
         Settings.PROJECT_DATA_DIRECTORY.mkdir()

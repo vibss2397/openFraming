@@ -13,8 +13,8 @@ from gensim.models import CoherenceModel  # type: ignore
 from nltk.corpus import stopwords  # type: ignore
 from nltk.stem.wordnet import WordNetLemmatizer  # type: ignore
 
-# from flask_app.settings import Settings
-from modeling.settings2 import Settings
+from flask_app.settings import Settings
+# from modeling.settings2 import Settings
 EXCEL_EXTENSIONS = {"xlsx", "xls"}
 CSV_EXTENSIONS = {"csv"}
 TSV_EXTENSIONS = {"tsv"}

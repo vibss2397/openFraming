@@ -5,11 +5,11 @@ import pandas as pd
 # Will do later.
 """Topic Modelling Part"""
 # /api/topic_models post
-"""
+
 data = {"topic_model_name": "something", "num_topics": 10, "notify_at_email": "vibs97@bu.edu", "language": "en"}
-res = requests.post('http://0.0.0.0:5000/api/topic_models/', json=data)
+res = requests.post('http://localhost:5000/api/topic_models/', json=data)
 print(res.text)
-"""
+
 
 # api/topic_models/1 get
 """
@@ -45,4 +45,4 @@ print(pd.read_excel(res.raw))
 data = {"topic_names": ['my', 'name', 'is', 'vubh', '5', '6', '7', '8', '9', '10']}
 res = requests.post('http://0.0.0.0:5000/api/topic_models/1/topics/names', json=data)
 print(res.text)
-""'
+"""
