@@ -805,7 +805,37 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
         self.reqparse.add_argument(
             name="file", type=FileStorage, required=True, location="files"
         )
-
+        self.reqparse.add_argument(
+            name="remove_stopwords",
+            type=bool,
+            required=False,
+            location="json",
+            help="Should common stopwords in this language be removed?",
+        )
+        self.reqparse.add_argument(
+            name="extra_stopwords",
+            type=T.List[str],
+            default = []
+            required=False,
+            location="json",
+            help="Should common stopwords in this language be removed?",
+        )
+        self.reqparse.add_argument(
+            name="phrases_to_join",
+            type=T.List[str],
+            default = []
+            required=False,
+            location="json",
+            help="Are there any phrases to join?",
+        )
+        # self.reqparse.add_argument(
+        #     name="phrases_to_join",
+        #     type=T.List[str],
+        #     default = []
+        #     required=False,
+        #     location="json",
+        #     help="Are there any phrases to join?",
+        # )
     def post(self, id_: int) -> TopicModelStatusJson:
         args = self.reqparse.parse_args()
         file_: FileStorage = args["file"]
