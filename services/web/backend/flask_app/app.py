@@ -710,6 +710,7 @@ class TopicModelRelatedResource(BaseResource):
             num_topics=topic_mdl.num_topics,
             topic_names=topic_names,
             notify_at_email=topic_mdl.notify_at_email,
+            language=topic_mdl.language,
             status=status,
             metrics=metrics,
         )
@@ -763,6 +764,13 @@ class TopicModels(TopicModelRelatedResource):
             required=True,
             location="json",
         )
+        self.reqparse.add_argument(
+            name="language",
+            type=str,
+            required=False,
+            default="en",
+            location="json",
+        )
 
     def post(self) -> TopicModelStatusJson:
         """Create a classifier."""
@@ -772,6 +780,7 @@ class TopicModels(TopicModelRelatedResource):
             topic_names=[f"Topic {i}" for i in range(1, args["num_topics"] + 1)],
             num_topics=args["num_topics"],
             notify_at_email=args["notify_at_email"],
+            language=args["language"]
         )
         # Default topic names
         topic_mdl.save()
@@ -796,7 +805,37 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
         self.reqparse.add_argument(
             name="file", type=FileStorage, required=True, location="files"
         )
-
+        self.reqparse.add_argument(
+            name="remove_stopwords",
+            type=bool,
+            required=False,
+            location="json",
+            help="Should common stopwords in this language be removed?",
+        )
+        self.reqparse.add_argument(
+            name="extra_stopwords",
+            type=T.List[str],
+            default = []
+            required=False,
+            location="json",
+            help="Should common stopwords in this language be removed?",
+        )
+        self.reqparse.add_argument(
+            name="phrases_to_join",
+            type=T.List[str],
+            default = []
+            required=False,
+            location="json",
+            help="Are there any phrases to join?",
+        )
+        # self.reqparse.add_argument(
+        #     name="phrases_to_join",
+        #     type=T.List[str],
+        #     default = []
+        #     required=False,
+        #     location="json",
+        #     help="Are there any phrases to join?",
+        # )
     def post(self, id_: int) -> TopicModelStatusJson:
         args = self.reqparse.parse_args()
         file_: FileStorage = args["file"]
@@ -808,7 +847,8 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
 
         if topic_mdl.lda_set is not None:
             raise AlreadyExists("This topic model already has a training set.")
-
+        # temp = pd.read_csv(file_).to_numpy()
+        
         table_headers, table_data = self._validate_and_get_training_file(file_)
         file_.close()
 
@@ -848,13 +888,10 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
             table_data: A list of lists of length 2.
         """
         # TODO: Write tests for all of these!
-
-        table = utils.Validate.spreadsheet_and_get_table(file_)
-
+        table = utils.Validate.spreadsheet_and_get_table2(file_)
         utils.Validate.table_has_num_columns(table, 1)
         utils.Validate.table_has_headers(table, [Settings.CONTENT_COL])
         utils.Validate.table_has_no_empty_cells(table)
-
         table_headers, table_data = table[0], table[1:]
         # Add the ID column to the table
         table_headers = [Settings.ID_COL] + table_headers
@@ -925,6 +962,7 @@ class TopicModelsTopicsPreview(TopicModelRelatedResource):
                 "notify_at_email": topic_mdl.notify_at_email,  # TODO: umm, why the black sheep?
                 "status": topic_mdl_status_json["status"],
                 "metrics": topic_mdl_status_json["metrics"],
+                "language": topic_mdl_status_json["language"],
                 "topic_previews": [
                     OneTopicPreviewJson({"examples": examples, "keywords": keywords})
                     for examples, keywords in zip(
@@ -1145,7 +1183,7 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
     app = Flask(__name__)
 
     # app.config["SERVER_NAME"] = Settings.SERVER_NAME
-    app.config["SERVER_NAME"] = "0.0.0.0:5000"
+    # app.config["SERVER_NAME"] = "0.0.0.0:5000"
     # Create project root if necessary
     if not Settings.PROJECT_DATA_DIRECTORY.exists():
         Settings.PROJECT_DATA_DIRECTORY.mkdir()

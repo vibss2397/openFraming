@@ -203,7 +203,8 @@ class TopicModel(BaseModel):
 
     @classmethod
     def create(  # type: ignore[override]
-        cls, name: str, num_topics: int, notify_at_email: str, topic_names: T.List[str]
+        cls, name: str, num_topics: int, notify_at_email: str, topic_names: T.List[str],
+        language: str
     ) -> "TopicModel":
         assert len(topic_names) == num_topics
         return super(TopicModel, cls).create(
@@ -211,6 +212,7 @@ class TopicModel(BaseModel):
             num_topics=num_topics,
             notify_at_email=notify_at_email,
             topic_names=topic_names,
+            language=language
         )
 
     id_: int = pw.AutoField()
@@ -219,6 +221,7 @@ class TopicModel(BaseModel):
     topic_names: T.List[str] = ListField(null=True)  # type: ignore
     lda_set: T.Optional[LDASet] = pw.ForeignKeyField(LDASet, null=True)  # type: ignore
     notify_at_email: str = pw.TextField()  # type: ignore
+    language:str = pw.TextField()
 
     # NOTE: The below is ONLY a type annotation.
     # The actual attribute is made available using "backreferences" in peewee
