@@ -1,16 +1,4 @@
 
-/* * * * * */
-/*  DATA   */
-/* * * * * */
-
-
-function cleanCategories(categories) {
-    let catsArr = categories.split(',');
-    catsArr = catsArr.map((cat) => {return cat.trim()});
-    return catsArr;
-}
-
-
 /* * * * * * */
 /*  BROWSER  */
 /* * * * * * */
@@ -48,7 +36,7 @@ $(document).ready(function() {
 
             // POST request for topic model
             const POST_CLASSIFIER = `${BASE_URL}/classifiers/`;
-            const categories = cleanCategories($('#fc-labels').val());
+            const categories = cleanTextboxInput($('#fc-labels').val());
             let postData = {
                 classifier_name: $('#fc-name').val(),
                 category_names: categories,
@@ -63,7 +51,7 @@ $(document).ready(function() {
                 success: function (data) {
                     console.log('success in topic model POST');
                     // POST request for training file
-                    const POST_FC_TRAINING_FILE = `${BASE_URL}/topic_models/${data.classifier_id}/training/file`;
+                    const POST_FC_TRAINING_FILE = `${BASE_URL}/classifiers/${data.classifier_id}/training/file`;
                     let fileFD = new FormData();
                     fileFD.append('file', document.getElementById("fc-training-invisible").files[0]);
 
