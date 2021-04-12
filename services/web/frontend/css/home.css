@@ -1,6 +1,35 @@
 
+
 body {
-    font-family: 'Montserrat', sans-serif;
+    background-image: url('../images/cloud.svg');
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: right top;
+}
+
+.centered-container h3 {
+    text-align: center;
+}
+
+.centered-container div.how-graphic1 {
+    margin-top: 5%;
+    margin-bottom: 5%;
+    text-align: center;
+}
+
+.centered-container div.how-graphic2 {
+    margin-top: 3.5%;
+    margin-bottom: 3.5%;
+    text-align: center;
+}
+
+.centered-container img {
+    width: 20%;
+}
+
+.centered-container a {
+    width: 75%;
+    margin: 10px;
 }
 
 p {
@@ -24,13 +53,19 @@ p {
     -webkit-box-shadow: -1px 6px 12px 0px rgba(207,207,207,0.82);
     -moz-box-shadow: -1px 6px 12px 0px rgba(207,207,207,0.82);
     box-shadow: -1px 6px 12px 0px rgba(207,207,207,0.82);
-    font-size: 20px;
+    font-family: 'Monda', sans-serif;
+    font-size: 1.5rem;
+}
+
+.navbar a {
+    font-size: 1.5rem;
 }
 
 /* always have some space below the content so that we can scroll properly*/
 .main-content {
     margin-bottom: 10%;
     padding: 50px;
+    font-family: 'Roboto', sans-serif;
 }
 
 
@@ -115,18 +150,18 @@ Buttons
 .btn-theme:not(:disabled):not(.disabled).active:focus,
 .show>.btn-theme.dropdown-toggle:focus{box-shadow:0 0 0 .2rem #8e47d6}
 
-.btn-outline-theme{color:#000;background-color:transparent;background-image:none;border-color:#c8a8ed}
-.btn-outline-theme:hover{color:#000;background-color:#c8a8ed;border-color:#c8a8ed}
+.btn-outline-theme{color:#000;background-color:transparent;background-image:none;border-color:rebeccapurple}
+.btn-outline-theme:hover{color:white;background-color:#8442c7;border-color:#8442c7}
 .btn-outline-theme:focus,
-.btn-outline-theme.focus{box-shadow:0 0 0 .2rem #c8a8ed}
+.btn-outline-theme.focus{box-shadow:0 0 0 .2rem #8e47d6}
 .btn-outline-theme.disabled,
-.btn-outline-theme:disabled{color:#c8a8ed;background-color:transparent}
+.btn-outline-theme:disabled{color:#8e47d6;background-color:transparent}
 .btn-outline-theme:not(:disabled):not(.disabled):active,
 .btn-outline-theme:not(:disabled):not(.disabled).active,
-.show>.btn-outline-theme.dropdown-toggle{color:#fff;background-color:#c8a8ed;border-color:#c8a8ed}
+.show>.btn-outline-theme.dropdown-toggle{color:#fff;background-color:#8e47d6;border-color:#8e47d6}
 .btn-outline-theme:not(:disabled):not(.disabled):active:focus,
 .btn-outline-theme:not(:disabled):not(.disabled).active:focus,
-.show>.btn-outline-theme.dropdown-toggle:focus{box-shadow:0 0 0 .2rem #c8a8ed}
+.show>.btn-outline-theme.dropdown-toggle:focus{box-shadow:0 0 0 .2rem #8e47d6}
 /* end custom button color */
 
 .navBtn{

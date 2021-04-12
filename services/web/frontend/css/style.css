@@ -1,7 +1,6 @@
 
 body {
   background: url("../images/background.png");
-  font-family: 'Montserrat', sans-serif;
 }
 
 .navbar {
@@ -9,13 +8,19 @@ body {
   -webkit-box-shadow: -1px 6px 12px 0px rgba(207,207,207,0.82);
   -moz-box-shadow: -1px 6px 12px 0px rgba(207,207,207,0.82);
   box-shadow: -1px 6px 12px 0px rgba(207,207,207,0.82);
-  font-size: 20px;
+  font-family: 'Monda', sans-serif;
+  font-size: 1.5rem;
+}
+
+.navbar a {
+  font-size: 1.5rem;
 }
 
 /* always have some space below the content so that we can scroll properly*/
 .main-content {
   margin-bottom: 10%;
   padding: 50px;
+  font-family: 'Roboto', sans-serif;
 }
 
 .spacer {
@@ -76,6 +81,7 @@ input {
 
 .info strong{
   color: rebeccapurple;
+  font-family: 'Roboto:wght@200', sans-serif;
 }
 
 .scrollable {
@@ -127,18 +133,18 @@ Buttons
 .btn-theme:not(:disabled):not(.disabled).active:focus,
 .show>.btn-theme.dropdown-toggle:focus{box-shadow:0 0 0 .2rem #8e47d6}
 
-/*.btn-outline-theme{color:#000;background-color:transparent;background-image:none;border-color:#c8a8ed}*/
-/*.btn-outline-theme:hover{color:#000;background-color:#c8a8ed;border-color:#c8a8ed}*/
-/*.btn-outline-theme:focus,*/
-/*.btn-outline-theme.focus{box-shadow:0 0 0 .2rem #c8a8ed}*/
-/*.btn-outline-theme.disabled,*/
-/*.btn-outline-theme:disabled{color:#c8a8ed;background-color:transparent}*/
-/*.btn-outline-theme:not(:disabled):not(.disabled):active,*/
-/*.btn-outline-theme:not(:disabled):not(.disabled).active,*/
-/*.show>.btn-outline-theme.dropdown-toggle{color:#fff;background-color:#c8a8ed;border-color:#c8a8ed}*/
-/*.btn-outline-theme:not(:disabled):not(.disabled):active:focus,*/
-/*.btn-outline-theme:not(:disabled):not(.disabled).active:focus,*/
-/*.show>.btn-outline-theme.dropdown-toggle:focus{box-shadow:0 0 0 .2rem #c8a8ed}*/
+.btn-outline-theme{color:#000;background-color:transparent;background-image:none;border-color:rebeccapurple}
+.btn-outline-theme:hover{color:white;background-color:#8442c7;border-color:#8442c7}
+.btn-outline-theme:focus,
+.btn-outline-theme.focus{box-shadow:0 0 0 .2rem #8e47d6}
+.btn-outline-theme.disabled,
+.btn-outline-theme:disabled{color:#8e47d6;background-color:transparent}
+.btn-outline-theme:not(:disabled):not(.disabled):active,
+.btn-outline-theme:not(:disabled):not(.disabled).active,
+.show>.btn-outline-theme.dropdown-toggle{color:#fff;background-color:#8e47d6;border-color:#8e47d6}
+.btn-outline-theme:not(:disabled):not(.disabled):active:focus,
+.btn-outline-theme:not(:disabled):not(.disabled).active:focus,
+.show>.btn-outline-theme.dropdown-toggle:focus{box-shadow:0 0 0 .2rem #8e47d6}
 /* end custom button color */
 
 .navBtn{
@@ -237,3 +243,10 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+.input-help {
+  margin: 2%;
+}
+
+.help-div {
+  display: none; /* to start info sections hidden */
+}
