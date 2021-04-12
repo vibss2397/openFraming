@@ -11,6 +11,7 @@ function getTMPreview(id) {
         type: "GET",
         dataType: "json",
         success: function (data) {
+            $('#preview-info').removeClass('hidden');
             $('#tm-prev-name').empty().append(data.topic_model_name);
             $('#tm-prev-num').empty().append(data.num_topics);
             $('#previews').empty();
@@ -31,29 +32,32 @@ $(document).ready(function() {
     const id = urlParams.get('id');
 
     if (id !== null) {
-        // getTMPreview(id);
+        // UNCOMMENT BELOW TO GET PREVIEW DATA FROM ACTUAL DB
+        getTMPreview(id);
 
-        let data = {
-            topic_model_name: 'model1',
-            num_topics: 2,
-            topic_names: ['Topic 1', 'Topic 2'],
-            topic_previews: [
-                {
-                    keywords: ['one', 'two', 'three'],
-                    examples: ['test1', 'test2', 'test3']
-                },
-                {
-                    keywords: ['one', 'two', 'three'],
-                    examples: ['test1', 'test2', 'test3']
-                },
-            ]
-        };
-        $('#tm-prev-name').empty().append(data.topic_model_name);
-        $('#tm-prev-num').empty().append(data.num_topics);
-        $('#previews').empty();
-        for (let i = 0; i < data.topic_previews.length; i++) {
-            formatPreviews(data.topic_names[i], data.topic_previews[i]);
-        }
+        // UNCOMMENT BELOW TO GET A PREVIEW OF WHAT THE UI WILL LOOK LIKE (NOT ACTUAL DB DATA)
+        // let data = {
+        //     topic_model_name: 'model1',
+        //     num_topics: 2,
+        //     topic_names: ['Topic 1', 'Topic 2'],
+        //     topic_previews: [
+        //         {
+        //             keywords: ['one', 'two', 'three'],
+        //             examples: ['test1', 'test2', 'test3']
+        //         },
+        //         {
+        //             keywords: ['one', 'two', 'three'],
+        //             examples: ['test1', 'test2', 'test3']
+        //         },
+        //     ]
+        // };
+        // $('#preview-info').removeClass('hidden');
+        // $('#tm-prev-name').empty().append(data.topic_model_name);
+        // $('#tm-prev-num').empty().append(data.num_topics);
+        // $('#previews').empty();
+        // for (let i = 0; i < data.topic_previews.length; i++) {
+        //     formatPreviews(data.topic_names[i], data.topic_previews[i]);
+        // }
 
 
     }
