@@ -4,6 +4,20 @@
 /* * * * * */
 
 
+// moved here for readability
+function getPreprocessingOptions() {
+   return {
+       remove_stops: $('#dc-stops').is(":checked"),
+       additional_stops: cleanTextboxInput($('#dc-more-stops')),
+       merge: cleanTextboxInput($('#dc-merge')),
+       remove_punct: $('#dc-punct').is(":checked"),
+       stemming: $('#dc-stem').is(":checked"),
+       lemmatization: $('#dc-lemma').is(":checked"),
+       min_word_length: $('#dc-min-words').val(),
+    }
+}
+
+
 /* * * * * * */
 /*  BROWSER  */
 /* * * * * * */
@@ -41,6 +55,9 @@ $(document).ready(function() {
         } else if ($('#tm-num').val() === "") {
             $('#error1-text').html('Please provide a number of topics to identify.');
             $('#error1').removeClass('hidden');
+        } else if ($('#tm-keywords').val() === "") {
+            $('#error1-text').html('Please provide a number of keywords to identify per topic.');
+            $('#error1').removeClass('hidden');
         } else if (document.getElementById("tm-training-invisible").files.length === 0) {
             $('#error1-text').html('Please provide a training file.');
             $('#error1').removeClass('hidden');
@@ -57,6 +74,7 @@ $(document).ready(function() {
             let postData = {
                 topic_model_name: $('#tm-name').val(),
                 num_topics: $('#tm-num').val(),
+                num_keywords: $('#tm-keywords').val(),
                 notify_at_email: $('#tm-email').val(),
                 language: $('#tm-lang').val()
             };
@@ -68,10 +86,15 @@ $(document).ready(function() {
                 data: JSON.stringify(postData),
                 success: function (data) {
                     console.log('success in topic model POST');
-                    // POST request for training file
+                    // POST request for training file and preprocessing
                     const POST_TM_TRAINING_FILE = `${BASE_URL}/topic_models/${data.topic_model_id}/training/file`;
                     let fileFD = new FormData();
                     fileFD.append('file', document.getElementById("tm-training-invisible").files[0]);
+
+                    let preprocess = getPreprocessingOptions();
+                    for (let key in preprocess) {
+                        fileFD.append(key, preprocess[key]);
+                    }
 
                     $.ajax({
                         url: POST_TM_TRAINING_FILE,
@@ -108,3 +131,7 @@ $(document).ready(function() {
 /*  HELPERS    */
 /* * * * * * * */
 
+function showHelp(id) {
+    let helpId = id+'-help';
+    $(`#${helpId}`).toggle();
+}

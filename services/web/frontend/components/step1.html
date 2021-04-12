@@ -12,7 +12,7 @@
 
   <!-- CDNS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gojs/1.8.2/go-debug.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://d3js.org/d3.v4.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 <!--  Choose Input Section  -->
 <div class="main-content container">
   <div class="row">
-    <div id="lda-main" class="col-md-12">
+    <div class="col-md-12">
       <div class="card card-main">
         <div class="card-body info">
           <p class="new-user">In conducting framing analysis of an issue, we suggest users first come up with
@@ -57,10 +57,10 @@
           <div class="container" style="font-size: 85%">
 <!--     TM NAME       -->
             <div class="row">
-              <div class="col-sm"><b>Topic model name</b></div>
+              <div class="col-sm"><b>Topic model name</b><i onclick="showHelp('tm-name')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm"><input type="text" id="tm-name" name="tm-name" value=""></div>
             </div>
-            <div class="row">
+            <div id="tm-name-help" class="row help-div">
               <div class="col-sm">
                 <label>* Give a name to your topic model</label>
               </div>
@@ -68,13 +68,13 @@
             <hr>
 <!--     TM FILE       -->
             <div class="row">
-              <div class="col-sm"><b>Upload a data file</b></div>
+              <div class="col-sm"><b>Upload a data file</b><i onclick="showHelp('tm-file')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm">
                 <input id="tm-training-invisible" type="file" class="hidden" accept=".xls,.xlsx,.csv,.tsv">
                 <a style="width: 50%; color: white" id="tm-training-visible" class="btn btn-theme mt-2 btn-block">Choose File</a>
                 <label id="tm-training-filepath" class="hidden"></label></div>
             </div>
-            <div class="row">
+            <div id="tm-file-help" class="row help-div">
               <div class="col-sm">
                 <label>* Upload a data file (.xls, .xlsx, .csv, or .tsv) containing only a column labeled "example",
                   which will contain the text documents. There should be one document per row. See the sample file.
@@ -84,20 +84,24 @@
             <hr>
 <!--     TM LANG       -->
             <div class="row">
-              <div class="col-sm"><b>Select the language of your dataset</b></div>
+              <div class="col-sm"><b>Select the language of your dataset</b><i onclick="showHelp('tm-lang')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm"><select style="width: 50%; padding: 5px" id="tm-lang" name="tm-lang"></select></div>
             </div>
-            <div class="row">
+            <div id="tm-lang-help" class="row help-div">
               <div class="col-sm">
+                <label>* The languages available are Arabic, Azerbaijani, Danish, Dutch, English, Finnish, French, German, Greek,
+                  Hungarian, Indonesian, Italian, Kazakh, Korean, Nepali, Norwegian, Portuguese, Romanian,
+                  Russian", Slovene, Spanish, Swedish", Tajik, and Turkish.
+                </label>
               </div>
             </div>
             <hr>
 <!--    TM NUM        -->
             <div class="row">
-              <div class="col-sm"><b>Number of LDA topics</b></div>
+              <div class="col-sm"><b>Number of LDA topics</b><i onclick="showHelp('tm-num')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm"><input type="number" id="tm-num" name="tm-num" value=""></div>
             </div>
-            <div class="row">
+            <div id="tm-num-help" class="row help-div">
               <div class="col-sm">
                 <label>* Indicate the number of topics you would like the topic modeler to look for. This is an inexact
                   decision by its very nature; it’s hard to tell ahead of time what topics the unsupervised model might
@@ -112,10 +116,10 @@
             <hr>
 <!--    TM KEY        -->
             <div class="row">
-              <div class="col-sm"><b>Number of keywords per LDA topic</b></div>
+              <div class="col-sm"><b>Number of keywords per LDA topic</b><i onclick="showHelp('tm-keywords')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm"><input type="number" id="tm-keywords" name="tm-keywords" value=""></div>
             </div>
-            <div class="row">
+            <div id="tm-keywords-help" class="row help-div">
               <div class="col-sm">
                 <label>* Indicate the number of keywords per LDA topic you would like the topic modeler to output.
                   In general, we suggest you use at least 5 and up to 20 keywords to determine the gist of a topic.
@@ -126,10 +130,10 @@
             <hr>
 <!--    TM EMAIL        -->
             <div class="row">
-              <div class="col-sm"><b>Email address</b></div>
+              <div class="col-sm"><b>Email address</b><i onclick="showHelp('tm-email')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm"><input type="text" id="tm-email" name="tm-email" value=""></div>
             </div>
-            <div class="row">
+            <div id="tm-email-help" class="row help-div">
               <div class="col-sm">
                 <label>
                   * We will send you an email when your topic modeling results files are ready to download. In the email,
@@ -150,7 +154,7 @@
           <div class="container" style="font-size: 85%">
 <!--     DC STOPS       -->
             <div class="row">
-              <div class="col-sm"><b>Remove stopwords</b></div>
+              <div class="col-sm"><b>Remove stopwords</b><i onclick="showHelp('dc-stops')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm">
                 <label class="switch">
                   <input type="checkbox" id="dc-stops">
@@ -158,7 +162,7 @@
                 </label>
               </div>
             </div>
-            <div class="row">
+            <div id="dc-stops-help" class="row help-div">
               <div class="col-sm">
                 <label>* Stopwords are words that don’t have much meaning by themselves; they’re more the glue of the
                   language than the actual parts that convey meaning. Examples include “the”, “and”, “or” and “we”.
@@ -169,12 +173,12 @@
             <hr>
 <!--     DC MORE STOPS       -->
             <div class="row">
-              <div class="col-sm"><b>Remove additional stopwords</b></div>
+              <div class="col-sm"><b>Remove additional stopwords</b><i onclick="showHelp('dc-more-stops')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm">
                 <textarea id="dc-more-stops" rows="4"></textarea>
               </div>
             </div>
-            <div class="row">
+            <div id="dc-more-stops-help" class="row help-div">
               <div class="col-sm">
                 <label>* If there are words that are frequently used in your corpus of text (someone studying dog
                   adoption might be seeing the words “dog” and “puppy” very frequently, for example), you can indicate
@@ -185,12 +189,12 @@
             <hr>
 <!--     DC MERGE       -->
             <div class="row">
-              <div class="col-sm"><b>Merge words into single entities</b></div>
+              <div class="col-sm"><b>Merge words into single entities</b><i onclick="showHelp('dc-merge')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm">
                 <textarea rows="4" id="dc-merge"></textarea>
               </div>
             </div>
-            <div class="row">
+            <div id="dc-merge-help" class="row help-div">
               <div class="col-sm">
                 <label>* The LDA analysis treats each word separately by default (i.e., a bag-of-words model). However,
                   some entities you want to include in the analysis may be longer than one word. For example, our
@@ -203,7 +207,7 @@
             <hr>
 <!--     DC PUNCT       -->
             <div class="row">
-              <div class="col-sm"><b>Remove punctuation and digits</b></div>
+              <div class="col-sm"><b>Remove punctuation and digits</b><i onclick="showHelp('dc-punct')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm">
                 <label class="switch">
                   <input type="checkbox" id="dc-punct">
@@ -211,7 +215,7 @@
                 </label>
               </div>
             </div>
-            <div class="row">
+            <div id="dc-punct-help" class="row help-div">
               <div class="col-sm">
                 <label>* Punctuation and digits may or may not be useful in your analysis. Choose if you would like
                   to remove those based on your research goal.
@@ -221,7 +225,7 @@
             <hr>
 <!--     DC STEM       -->
             <div class="row">
-              <div class="col-sm"><b>Stemming (English only)</b></div>
+              <div class="col-sm"><b>Stemming (English only)</b><i onclick="showHelp('dc-stem')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm">
                 <label class="switch">
                   <input type="checkbox" id="dc-stem">
@@ -229,7 +233,7 @@
                 </label>
               </div>
             </div>
-            <div class="row">
+            <div id="dc-stem-help" class="row help-div">
               <div class="col-sm">
                 <label>* Stemming is a standard data cleaning procedure that reduces words to their word stem, base or
                   root form. For example, if you choose to keep this option on, “car,” “cars,” “car’s,” and “cars’” will
@@ -240,7 +244,7 @@
             <hr>
 <!--     DC LEM       -->
             <div class="row">
-              <div class="col-sm"><b>Lemmatization (English only)</b></div>
+              <div class="col-sm"><b>Lemmatization (English only)</b><i onclick="showHelp('dc-lemma')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm">
                 <label class="switch">
                   <input type="checkbox" id="dc-lemma">
@@ -248,19 +252,22 @@
                 </label>
               </div>
             </div>
-            <div class="row">
+            <div id="dc-lemma-help" class="row help-div">
               <div class="col-sm">
+                <label>
+                  < Definition of lemmatization >
+                </label>
               </div>
             </div>
             <hr>
 <!--     DC MIN       -->
             <div class="row">
-              <div class="col-sm"><b>Minimum word length (English only)</b></div>
+              <div class="col-sm"><b>Minimum word length (English only)</b><i onclick="showHelp('dc-min-words')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
               <div class="col-sm">
-                <input type="number" id="dc-min-words" name="dc-min-words" value="">
+                <input type="number" id="dc-min-words" name="dc-min-words" value="1" min="1">
               </div>
             </div>
-            <div class="row">
+            <div id="dc-min-words-help" class="row help-div">
               <div class="col-sm">
                 <label>* You can set the minimum length of words (e.g., at least three letters) to keep in the analysis.
                   Just enter a number.
@@ -294,178 +301,3 @@
 
 </body>
 </html>
-
-
-
-<!--          <table id='lda-form' class="table table-condensed">-->
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Topic model name</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* Give a name to your topic model</label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle">-->
-<!--                <input type="text" id="tm-name" name="tm-name" value="">-->
-<!--              </td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Upload a training file</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* Upload a data file (.xls, .xlsx, .csv, or .tsv) containing only a column labeled “example”,-->
-<!--                  which will contain the text documents. There should be one document per row. See the sample file.-->
-<!--                </label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle">-->
-<!--                <input id="tm-training-invisible" type="file" class="hidden">-->
-<!--                <a style="width: 55%; color: white" id="tm-training-visible" class="btn btn-theme mt-2 btn-block">Choose File</a>-->
-<!--                <label id="tm-training-filepath" class="hidden"></label>-->
-<!--              </td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Select the language of your dataset</b>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle">-->
-<!--                <select style="width: 55%; padding: 5px" id="tm-lang" name="tm-lang"></select>-->
-<!--              </td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Number of topics</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* Indicate the number of topics you would like the topic modeler to look for. This is an inexact-->
-<!--                  decision by its very nature; it’s hard to tell ahead of time what topics the unsupervised model might-->
-<!--                  discover. Many researchers using topic modeling have found it useful to try different numbers of-->
-<!--                  topics and make the final decision based on qualitative exploration of the topic matrices produced-->
-<!--                  by different models. For broader issues such as presidential elections, we suggest up to 20 topics;-->
-<!--                  for specific issues such as gun violence and immigration, we suggest up to 10 topics. We recommend you-->
-<!--                  rerun the topic modeling a few times to see what number of topics works best for you.-->
-<!--                </label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle">-->
-<!--                <input type="number" id="tm-num" name="tm-num" value="">-->
-<!--              </td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Email address</b>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle">-->
-<!--                <input type="text" id="tm-email" name="tm-email" value="">-->
-<!--              </td>-->
-<!--            </tr>-->
-<!--          </table>-->
-<!--          <hr>-->
-
-<!--          <h5><strong>Data Cleaning:</strong></h5>-->
-<!--          <p style="font-size: 85%">It is important to clean and preprocess the data before you run the topic modeling. Some of the-->
-<!--            things we can do to preprocess your text include:</p>-->
-<!--          <table id='data-cleaning' class="table table-condensed">-->
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Remove stopwords</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* Stopwords are words that don’t have much meaning by themselves; they’re more the glue of the-->
-<!--                  language than the actual parts that convey meaning. Examples include “the”, “and”, “or” and “we”.-->
-<!--                  By selecting “on,” we will remove all the stopwords in your selected language based on-->
-<!--                </label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle" style="text-align: center;">-->
-<!--                <label class="switch">-->
-<!--                  <input type="checkbox" id="dc-stops">-->
-<!--                  <span class="slider round"></span>-->
-<!--                </label>-->
-<!--              </td>-->
-<!--            </tr>-->
-
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Remove additional stopwords</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* If there are words that are frequently used in your corpus of text (someone studying dog-->
-<!--                  adoption might be seeing the words “dog” and “puppy” very frequently, for example), you can indicate-->
-<!--                  that you want them to be removed. List all the words you want to remove and use commas to separate them.-->
-<!--                </label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle">-->
-<!--                <textarea id="dc-more-stops" rows="4"></textarea>-->
-<!--              </td>-->
-<!--            </tr>-->
-
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Merge words into single entities</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* The LDA analysis treats each word separately by default (i.e., a bag-of-words model). However,-->
-<!--                  some entities you want to include in the analysis may be longer than one word. For example, our-->
-<!--                  default text preprocessing would split phrases like “Anthony Fauci” or “White House” into two separate-->
-<!--                  words, but you may want to merge such words into single entities for the purposes of your analysis.-->
-<!--                  Simply add such words in the textbox (as written in the text examples) and we will do that merging for you.-->
-<!--                </label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle">-->
-<!--                <textarea rows="4" id="dc-merge"></textarea>-->
-<!--              </td>-->
-<!--            </tr>-->
-
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Remove punctuation and digits</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* Punctuation and digits may or may not be useful in your analysis. Choose if you would like-->
-<!--                  to remove those based on your research goal.-->
-<!--                </label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle" style="text-align: center;">-->
-<!--                <label class="switch">-->
-<!--                  <input type="checkbox" id="dc-punct">-->
-<!--                  <span class="slider round"></span>-->
-<!--                </label>-->
-<!--              </td>-->
-<!--            </tr>-->
-
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Stemming (English only)</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* Stemming is a standard data cleaning procedure that reduces words to their word stem, base or-->
-<!--                  root form. For example, if you choose to keep this option on, “car,” “cars,” “car’s,” and “cars’” will-->
-<!--                  all be transformed to the same word “car.”-->
-<!--                </label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle" style="text-align: center;">-->
-<!--                <label class="switch">-->
-<!--                  <input type="checkbox" id="dc-stem">-->
-<!--                  <span class="slider round"></span>-->
-<!--                </label>-->
-<!--              </td>-->
-<!--            </tr>-->
-
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Lemmatization (English only)</b>-->
-<!--                <div class="spacer"></div>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle" style="text-align: center;">-->
-<!--                <label class="switch">-->
-<!--                  <input type="checkbox" id="dc-lemma">-->
-<!--                  <span class="slider round"></span>-->
-<!--                </label>-->
-<!--              </td>-->
-<!--            </tr>-->
-
-<!--            <tr>-->
-<!--              <td width="60%">-->
-<!--                <b>Minimum word length (English only)</b>-->
-<!--                <div class="spacer"></div>-->
-<!--                <label>* You can set the minimum length of words (e.g., at least three letters) to keep in the analysis.-->
-<!--                  Just enter a number.-->
-<!--                </label>-->
-<!--              </td>-->
-<!--              <td width="40%" class="align-middle">-->
-<!--                <input type="number" id="dc-min-words" name="dc-min-words" value="">-->
-<!--              </td>-->
-<!--            </tr>-->
-<!--          </table>-->
-<!--          <hr>-->
