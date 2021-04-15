@@ -198,13 +198,22 @@ class LDASet(BaseModel):
     metrics: T.Optional[TopicModelMetrics] = pw.ForeignKeyField(TopicModelMetrics, null=True)  # type: ignore
 
 
+class TopicModelProcessing(BaseModel):
+    id_: int = pw.AutoField(primary_key=True)
+    remove_stopwords: bool = pw.BooleanField(default=True)
+    extra_stopwords: T.List[str] = ListField(null=True)
+    phrases_to_join: T.List[str] = ListField(null=True)
+    remove_punctuation: bool = pw.BooleanField(default=True)
+    do_stemming: bool = pw.BooleanField()
+    do_lemmatizing: bool = pw.BooleanField()
+
 class TopicModel(BaseModel):
     """."""
 
     @classmethod
     def create(  # type: ignore[override]
         cls, name: str, num_topics: int, notify_at_email: str, topic_names: T.List[str],
-        language: str
+        language: str, processing: TopicModelProcessing
     ) -> "TopicModel":
         assert len(topic_names) == num_topics
         return super(TopicModel, cls).create(
@@ -212,7 +221,8 @@ class TopicModel(BaseModel):
             num_topics=num_topics,
             notify_at_email=notify_at_email,
             topic_names=topic_names,
-            language=language
+            language=language,
+            processing=processing
         )
 
     id_: int = pw.AutoField()
@@ -222,6 +232,7 @@ class TopicModel(BaseModel):
     lda_set: T.Optional[LDASet] = pw.ForeignKeyField(LDASet, null=True)  # type: ignore
     notify_at_email: str = pw.TextField()  # type: ignore
     language:str = pw.TextField()
+    processing = pw.ForeignKeyField(TopicModelProcessing, null=True)
 
     # NOTE: The below is ONLY a type annotation.
     # The actual attribute is made available using "backreferences" in peewee
