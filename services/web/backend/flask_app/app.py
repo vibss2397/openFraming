@@ -645,6 +645,12 @@ class TopicModelStatusJson(TypedDict):
     status: TT.Literal[
         "not_begun", "training", "topics_to_be_named", "error_encountered", "completed"
     ]
+    remove_stopwords: bool
+    extra_stopwords: T.Optional[T.List[str]]
+    phrases_to_join: T.Optional[T.List[str]]
+    remove_punctuation: bool
+    do_stemming: bool
+    do_lemmatizing: bool
     # TODO: Update backend README to reflect API change for line above.
 
 
@@ -713,6 +719,12 @@ class TopicModelRelatedResource(BaseResource):
             language=topic_mdl.language,
             status=status,
             metrics=metrics,
+            remove_stopwords=topic_mdl.processing.remove_stopwords,
+            extra_stopwords=topic_mdl.processing.extra_stopwords,
+            phrases_to_join=topic_mdl.processing.phrases_to_join,
+            remove_punctuation=topic_mdl.processing.remove_punctuation,
+            do_stemming=topic_mdl.processing.do_stemming,
+            do_lemmatizing=topic_mdl.processing.do_lemmatizing
         )
 
     @staticmethod
@@ -767,22 +779,78 @@ class TopicModels(TopicModelRelatedResource):
         self.reqparse.add_argument(
             name="language",
             type=str,
-            required=False,
-            default="en",
+            required=True,
+            default="english",
             location="json",
+        )
+        self.reqparse.add_argument(
+            name="remove_stopwords",
+            type=bool,
+            required=True,
+            location="json",
+            help="Should common stopwords in this language be removed?",
+        )
+        self.reqparse.add_argument(
+            name="extra_stopwords",
+            type=self._validate_serializable_list_value,
+            action="append",
+            required=False,
+            location="json",
+            default=[],
+            help="Should common stopwords in this language be removed?",
+        )
+        self.reqparse.add_argument(
+            name="phrases_to_join",
+            type=self._validate_serializable_list_value,
+            action="append",
+            required=False,
+            location="json",
+            default=[],
+            help="Are there any phrases to join?",
+        )
+        self.reqparse.add_argument(
+            name="remove_punctuation",
+            type=bool,
+            required=True,
+            location="json",
+            help="Do we need to remove punctuation and digits?",
+        )
+        self.reqparse.add_argument(
+            name="do_stemming",
+            type=bool,
+            required=True,
+            location="json",
+            help="Do we need to do stemming(english only)?",
+        )
+        self.reqparse.add_argument(
+            name="do_lemmatizing",
+            type=bool,
+            required=True,
+            location="json",
+            help="Do we need to do lemmatize(english only)?",
         )
 
     def post(self) -> TopicModelStatusJson:
         """Create a classifier."""
         args = self.reqparse.parse_args()
+        topic_mdl_processing = models.TopicModelProcessing.create(
+            remove_stopwords=args['remove_stopwords'],
+            extra_stopwords=args['extra_stopwords'] if len(args['extra_stopwords'])>0 else None,
+            phrases_to_join=args['phrases_to_join'] if len(args['phrases_to_join'])>0 else None,
+            remove_punctuation=args['remove_punctuation'],
+            do_stemming=args['do_stemming'],
+            do_lemmatizing=args['do_lemmatizing'],
+        )
+        topic_mdl_processing.save()
         topic_mdl = models.TopicModel.create(
             name=args["topic_model_name"],
             topic_names=[f"Topic {i}" for i in range(1, args["num_topics"] + 1)],
             num_topics=args["num_topics"],
             notify_at_email=args["notify_at_email"],
-            language=args["language"]
+            language=args["language"],
+            processing=topic_mdl_processing
         )
-        # Default topic names
+    #     # Default topic names
         topic_mdl.save()
         utils.Files.topic_model_dir(id_=topic_mdl.id_, ensure_exists=True)
         return self._topic_model_status_json(topic_mdl)
@@ -805,49 +873,15 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
         self.reqparse.add_argument(
             name="file", type=FileStorage, required=True, location="files"
         )
-        self.reqparse.add_argument(
-            name="remove_stopwords",
-            type=bool,
-            required=False,
-            location="json",
-            help="Should common stopwords in this language be removed?",
-        )
-        self.reqparse.add_argument(
-            name="extra_stopwords",
-            type=T.List[str],
-            default = [],
-            required=False,
-            location="json",
-            help="Should common stopwords in this language be removed?",
-        )
-        self.reqparse.add_argument(
-            name="phrases_to_join",
-            type=T.List[str],
-            default = [],
-            required=False,
-            location="json",
-            help="Are there any phrases to join?",
-        )
-        # self.reqparse.add_argument(
-        #     name="phrases_to_join",
-        #     type=T.List[str],
-        #     default = []
-        #     required=False,
-        #     location="json",
-        #     help="Are there any phrases to join?",
-        # )
-    def post(self, id_: int) -> TopicModelStatusJson:
+    def post(self, id_: int) -> dict:
         args = self.reqparse.parse_args()
         file_: FileStorage = args["file"]
-
         try:
             topic_mdl = models.TopicModel.get(models.TopicModel.id_ == id_)
         except models.TopicModel.DoesNotExist:
             raise NotFound("The topic model was not found.")
-
         if topic_mdl.lda_set is not None:
             raise AlreadyExists("This topic model already has a training set.")
-        # temp = pd.read_csv(file_).to_numpy()
         
         table_headers, table_data = self._validate_and_get_training_file(file_)
         file_.close()
@@ -864,6 +898,13 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
             fname_keywords=str(utils.Files.topic_model_keywords_file(id_)),
             fname_topics_by_doc=str(utils.Files.topic_model_topics_by_doc_file(id_)),
             mallet_bin_directory=str(Settings.MALLET_BIN_DIRECTORY),
+            language=topic_mdl.language,
+            remove_stopwords=topic_mdl.processing.remove_stopwords,
+            extra_stopwords=topic_mdl.processing.extra_stopwords,
+            phrases_to_join=topic_mdl.processing.phrases_to_join,
+            remove_punctuation=topic_mdl.processing.remove_punctuation,
+            do_stemming=topic_mdl.processing.do_stemming,
+            do_lemmatizing=topic_mdl.processing.do_lemmatizing
         )
         topic_mdl.lda_set = models.LDASet()
         topic_mdl.lda_set.save()
@@ -969,6 +1010,12 @@ class TopicModelsTopicsPreview(TopicModelRelatedResource):
                         examples_per_topic, keywords_per_topic
                     )
                 ],
+                "remove_stopwords": topic_mdl_status_json["processing"]["remove_stopwords"],
+                "extra_stopwords": topic_mdl_status_json["processing"]["remove_stopwords"],
+                "phrases_to_join": topic_mdl_status_json["processing"]["phrases_to_join"],
+                "remove_punctuation": topic_mdl_status_json["processing"]["remove_punctuation"],
+                "do_stemming": topic_mdl_status_json["processing"]["do_stemming"],
+                "do_lemmatizing": topic_mdl_status_json["processing"]["do_lemmatizing"],
             }
         )
         return topic_preview_json

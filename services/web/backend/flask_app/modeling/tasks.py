@@ -17,9 +17,10 @@ from flask_app.database import models
 from flask_app.modeling.classifier import ClassifierModel
 from flask_app.modeling.lda import Corpus
 from flask_app.modeling.lda import LDAModeler
+from flask_app.modeling.lda import LDAPreprocessingOptions
 from flask_app.modeling.queue_manager import ClassifierPredictionTaskArgs
 from flask_app.modeling.queue_manager import ClassifierTrainingTaskArgs
-from flask_app.modeling.queue_manager import TopicModelTrainingTaskArgs
+from flask_app.modeling.queue_manager import TopicModelTrainingTaskArgs, TopicModelProcessingOptions
 from flask_app.settings import Settings
 
 logging.basicConfig()
@@ -113,16 +114,30 @@ def do_classifier_related_task(
 
 
 @flask_app.app.needs_app_context
-def do_topic_model_related_task(task_args: TopicModelTrainingTaskArgs) -> None:
+def do_topic_model_related_task(task_args: TopicModelTrainingTaskArgs, 
+                                processing_opts: TopicModelProcessingOptions
+                            ) -> None:
     topic_mdl = models.TopicModel.get(
         models.TopicModel.id_ == task_args["topic_model_id"]
     )
     assert topic_mdl.lda_set is not None
     try:
+        preprocessing_opts = LDAPreprocessingOptions(
+            remove_phrases=False,
+            join_phrases=True if len(processing_opts['phrases_to_join'])>0 else False,
+            remove_punctuation_and_digits = processing_opts['remove_punctuation'],
+            remove_stopwords=processing_opts['remove_stopwords'],
+            lemmatize_content=processing_opts['do_lemmatizing'] 
+                            if task_args['language']=='english' else False
+        ) # nothing being done about 'do_stemming'
         corpus = Corpus(
             file_name=task_args["training_file"],
             content_column_name=Settings.CONTENT_COL,
             id_column_name=Settings.ID_COL,
+            language=task_args["language"],
+            extra_stopwords=processing_opts['extra_stopwords'],
+            phrases_to_join=processing_opts['phrases_to_join'],
+            processing_to_do=preprocessing_opts
         )
         lda_modeler = LDAModeler(
             corpus,
