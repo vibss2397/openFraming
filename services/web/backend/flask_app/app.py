@@ -833,17 +833,15 @@ class TopicModels(TopicModelRelatedResource):
     def post(self) -> TopicModelStatusJson:
         """Create a classifier."""
         args = self.reqparse.parse_args()
-        topic_mdl_processing = models.TopicModelProcessing(
+        topic_mdl_processing = models.TopicModelProcessing.create(
             remove_stopwords=args['remove_stopwords'],
-            extra_stopwords=['asd', 'sdsdsds'],
-            phrases_to_join=['asd', 'dfdfdf'],
+            extra_stopwords=args['extra_stopwords'] if len(args['extra_stopwords'])>0 else None,
+            phrases_to_join=args['phrases_to_join'] if len(args['phrases_to_join'])>0 else None,
             remove_punctuation=args['remove_punctuation'],
             do_stemming=args['do_stemming'],
             do_lemmatizing=args['do_lemmatizing'],
         )
-        
         topic_mdl_processing.save()
-        print(topic_mdl_processing.phrases_to_join)
         topic_mdl = models.TopicModel.create(
             name=args["topic_model_name"],
             topic_names=[f"Topic {i}" for i in range(1, args["num_topics"] + 1)],
@@ -852,7 +850,7 @@ class TopicModels(TopicModelRelatedResource):
             language=args["language"],
             processing=topic_mdl_processing
         )
-        # Default topic names
+    #     # Default topic names
         topic_mdl.save()
         utils.Files.topic_model_dir(id_=topic_mdl.id_, ensure_exists=True)
         return self._topic_model_status_json(topic_mdl)
@@ -882,7 +880,6 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
             topic_mdl = models.TopicModel.get(models.TopicModel.id_ == id_)
         except models.TopicModel.DoesNotExist:
             raise NotFound("The topic model was not found.")
-
         if topic_mdl.lda_set is not None:
             raise AlreadyExists("This topic model already has a training set.")
         

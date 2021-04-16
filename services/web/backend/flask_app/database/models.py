@@ -232,7 +232,7 @@ class TopicModel(BaseModel):
     lda_set: T.Optional[LDASet] = pw.ForeignKeyField(LDASet, null=True)  # type: ignore
     notify_at_email: str = pw.TextField()  # type: ignore
     language:str = pw.TextField()
-    processing = pw.ForeignKeyField(TopicModelProcessing, null=True)
+    processing: T.Optional[TopicModelProcessing] = pw.ForeignKeyField(TopicModelProcessing, null=True)
 
     # NOTE: The below is ONLY a type annotation.
     # The actual attribute is made available using "backreferences" in peewee
@@ -279,4 +279,5 @@ MODELS: T.Tuple[T.Type[pw.Model], ...] = (
     TopicModel,
     SemiSupervisedSet,
     TopicModelMetrics,
+    TopicModelProcessing
 )

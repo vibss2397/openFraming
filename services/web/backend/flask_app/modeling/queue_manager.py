@@ -144,12 +144,12 @@ class QueueManager(object):
                 fname_topics_by_doc=fname_topics_by_doc,
                 iterations=iterations,
                 mallet_bin_directory=mallet_bin_directory,
-                langugae=language
+                language=language
             ),
             TopicModelProcessingOptions(
                 remove_stopwords=remove_stopwords,
-                extra_stopwords=extra_stopwords,
-                phrases_to_join=phrases_to_join,
+                extra_stopwords=[] if extra_stopwords is None else extra_stopwords,
+                phrases_to_join=[] if phrases_to_join is None else phrases_to_join,
                 remove_punctuation=remove_punctuation,
                 do_stemming=do_stemming,
                 do_lemmatizing=do_lemmatizing,

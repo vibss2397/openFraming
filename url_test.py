@@ -6,14 +6,14 @@ import json
 """Topic Modelling Part"""
 # /api/topic_models post
 
-data = {
-    "topic_model_name": "all things must pass", "num_topics": 10, 
-    "notify_at_email": "vibs97@bu.edu", "language": "en",
-    "remove_stopwords": True, "phrases_to_join": ["anderson cooper"], 
-    "remove_punctuation": True, "do_stemming": True, "do_lemmatizing": False
-    }
-res = requests.post('http://localhost:5000/api/topic_models/', json=data)
-print(res.text)
+# data = {
+#     "topic_model_name": "all things must pass", "num_topics": 10, 
+#     "notify_at_email": "vibs97@bu.edu", "language": "french",
+#     "remove_stopwords": True, "remove_punctuation": True, 
+#     "do_stemming": False, "do_lemmatizing": False
+#     }
+# res = requests.post('http://localhost:5000/api/topic_models/', json=data)
+# print(res.text)
 
 
 # api/topic_models/1 get
@@ -24,11 +24,11 @@ print(res.text)
 
 # api/topic_models/1/training/file/
 
-# fil = open('testing_files/dev.csv', 'r')
-# data = {"file": fil} 
-# # print(pd.read_csv(fil))
-# res = requests.post('http://0.0.0.0:5000/api/topic_models/15/training/file', files=data)
-# print(res.text)
+fil = open('testing_files/train_fr.csv', 'r')
+data = {"file": fil} 
+# print(pd.read_csv(fil))
+res = requests.post('http://0.0.0.0:5000/api/topic_models/10/training/file', files=data)
+print(res.text)
 
 
 # api/topic_models/1/topics/preview get
