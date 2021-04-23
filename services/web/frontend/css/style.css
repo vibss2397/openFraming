@@ -29,6 +29,12 @@ body {
   display: block;
 }
 
+.spacer-l {
+  height: 75px;
+  width: 100%;
+  display: block;
+}
+
 input[type=radio] {
   box-sizing: border-box;
 }

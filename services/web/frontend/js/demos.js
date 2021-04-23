@@ -5,6 +5,8 @@ let GUN_DATA;
 let COV_US;
 let COV_KO;
 
+let monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+
 let pie;
 // let datevalues;
 
@@ -63,7 +65,7 @@ function get_keyframes(datevalues, names){
 // Plotting functions
 function bars(svg, prev, next, data2, x, y) {
     let bar = svg.append("g")
-        .attr("fill-opacity", 0.8)
+        // .attr("fill-opacity", 0.8)
         .selectAll("rect");
 
     return ([date, data], transition) => bar = bar
@@ -375,7 +377,7 @@ function update(data, color) {
         .attr('fill', function(d){ return(color(d.data.key)) })
         .attr("stroke", "white")
         .style("stroke-width", "2px")
-        .style("opacity", 0.7)
+        // .style("opacity", 0.7)
         .transition().duration(1000)
         .attrTween("d", function(d) {
             this._current = this._current || d;
@@ -473,7 +475,8 @@ function create_bar(data2, color_bar){
     var parse = d3.format("m");
     var subgroups = Object.keys(data[0]).slice(1)
     // console.log(subgroups)
-    var groups = data.map(x => {return x.month})
+    var groups = data.map(x => {return monthNames[x.month]})
+    // var groups = data.map(x => {return x.month+1}) // plus one for 1-index
     var x = d3.scaleBand()
         .domain(groups)
         .range([0, bar_width])
@@ -502,12 +505,13 @@ function create_bar(data2, color_bar){
         .data(stackedData)
         .enter().append("g")
         .attr("fill", function(d) {return color_bar(d.key); })
-        .attr("opacity", 0.7)
+        // .attr("opacity", 0.7)
         .selectAll("rect")
         // enter a second time = loop subgroup per subgroup to add all rectangles
         .data(function(d) { return d; })
         .enter().append("rect")
-        .attr("x", function(d) {return x(d.data.month); })
+        .attr("x", function(d) {return x(monthNames[d.data.month]); })
+        // .attr("x", function(d) {return x(d.data.month+1); })
         .attr("y", function(d) { return y(d[1]); })
         .attr("height", function(d) { return y(d[0]) - y(d[1]); })
         .attr("width",x.bandwidth());
@@ -516,10 +520,10 @@ function create_bar(data2, color_bar){
         .data(color_codes)
         .enter().append("g")
         .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(30," + i * 19 + ")"; });
+        .attr("transform", function(d, i) { return "translate(150," + i * 19 + ")"; });
 
     legend.append("text")
-        .attr("x", bar_width -120)
+        .attr("x", bar_width -240)
         .attr("y", 9)
         .attr("dy", ".10em")
         .style("text-anchor", "start")
@@ -528,7 +532,7 @@ function create_bar(data2, color_bar){
             return Object.keys(data2[0]).sort()[i];
         });
     legend.append("rect")
-        .attr("x", bar_width - 140)
+        .attr("x", bar_width - 260)
         .attr("width", 12)
         .attr("height", 12)
         .style("fill", function(d, i) {return color_codes.slice().reverse()[i];})
@@ -537,8 +541,11 @@ function create_bar(data2, color_bar){
 
 }
 
-function add_names_to_div(names){
-    // console.log(names);
+function add_names_to_div(){
+    let names = ['Daily Caller', 'Daily KOS', 'New York Times', 'CNN', 'Washington Post', 'USA Today', 'Breitbart',
+                'ABC News', 'The Hill', 'Chicago Tribune', 'News Week', 'LA Times', 'Fox News', 'NPR', 'Huffington Post',
+                'Newsmax', 'NBC News', 'PBS', 'Slate', 'MSNBC', 'CBS News', 'The Blaze', 'Wall Street Journal', 'Politico',
+                'Mother Jones', 'The Atlantic', 'Vox', 'Yahoo', 'Buzzfeed'];
     for(let name of names){
         $('#news-list').append(
             "<li class='list-group-item'>"+name+"</li>"
@@ -566,7 +573,7 @@ function show_gunviolence(val='all'){
         pie_height = 800,
         pie_margin = 170;
 
-    margin = {top: 10, right: 80, bottom: 20, left: 50},
+    margin = {top: 10, right: 200, bottom: 20, left: 50},
         bar_width = 550,
         bar_height = 500;
 
@@ -577,9 +584,9 @@ function show_gunviolence(val='all'){
     svg = d3.select("#gunv-chart")
         .append("svg")
         .attr("width", pie_width)
-        .attr("height", pie_height)
+        .attr("height", 600)
         .append("g")
-        .attr("transform", "translate(" + pie_width / 2 + "," + pie_height / 2 + ")");
+        .attr("transform", "translate(" + pie_width / 2 + "," + pie_height / 3 + ")");
 
     plot_pie_chart(data_processing)
 }
@@ -602,7 +609,7 @@ $(document).ready(function() {
 
     // $("#step4")
 
-    d3.csv("../frontend/datasets/gunviolence_data.csv",function(d) {
+    d3.csv("../frontend/datasets/german_gunviolence_data.csv",function(d) {
         return {
             date : parse3(d.date),
             name : d.name,
@@ -612,7 +619,7 @@ $(document).ready(function() {
         };
     }).then(function(data) {
         gun_names = new Set(data.map(d => d.name));
-        add_names_to_div(gun_names);
+        add_names_to_div();
         GUN_DATA=data;
         show_gunviolence();
     });

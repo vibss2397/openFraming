@@ -51,94 +51,120 @@
         </ul>
     </nav>
 
-    <div class="main-content container">
-            <div class="card card-main">
-                <ul class="nav nav-tabs" id="demo-tabs" role="tablist">
-                    <li class="nav-item active" role="presentation">
-                        <a class="nav-link active" href="#covid-us" aria-controls="covid-us" role="tab" data-toggle="tab">Covid-19 US</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="#covid-ko" aria-controls="covid-ko" role="tab" data-toggle="tab">Covid-19 Korea</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="#gun-violence" aria-controls="gun-violence" role="tab" data-toggle="tab">Gun Violence</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="demo-tab-content">
+    <div class="main-content">
+        <div class="card card-main">
+            <ul class="nav nav-tabs" id="demo-tabs" role="tablist">
+                <li class="nav-item active" role="presentation">
+                    <a class="nav-link active" href="#covid-us" aria-controls="covid-us" role="tab" data-toggle="tab">Covid-19 US</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="#covid-ko" aria-controls="covid-ko" role="tab" data-toggle="tab">Covid-19 Korea</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="#gun-violence" aria-controls="gun-violence" role="tab" data-toggle="tab">Gun Violence</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="demo-tab-content">
 <!--  COVID-19 US TAB  -->
-                    <div style="margin: 5%;" class="tab-pane fade show active" id="covid-us" role="tabpanel" aria-labelledby="covid-us-tab">
-                        <h2>Framing of Covid-19 in U.S. news media over time </h2>
-                        <diV id="cov-us-chart" class="chart"></diV>
-                    </div>
+                <div style="margin: 5%;" class="tab-pane fade show active" id="covid-us" role="tabpanel" aria-labelledby="covid-us-tab">
+                    <h2>Framing of Covid-19 in U.S. news media over time </h2>
+                    <diV id="cov-us-chart" class="chart"></diV>
+                </div>
 <!--  COVID-19 KO TAB  -->
-                    <div style="margin: 5%;" class="tab-pane fade" id="covid-ko" role="tabpanel" aria-labelledby="covid-ko-tab">
-                        <h2>Framing of Covid-19 in South Korean news media over time </h2>
-                        <div id="cov-ko-chart" class="chart"></div>
-                    </div>
+                <div style="margin: 5%;" class="tab-pane fade" id="covid-ko" role="tabpanel" aria-labelledby="covid-ko-tab">
+                    <h2>Framing of Covid-19 in South Korean news media over time </h2>
+                    <div id="cov-ko-chart" class="chart"></div>
+                </div>
 <!--  GUN VIOLENCE TAB  -->
-                    <div style="margin: 5%;" class="tab-pane fade" id="gun-violence" role="tabpanel" aria-labelledby="gun-violence-tab">
-                        <h2>Explore framing of gun violence in the news using the checkboxes below</h2>
-                        <div class="row">
-                            <div style="padding-right: 0;" class="help-bar col-4 gunviolence_div">
-                                <div class="row">
-                                    <div class="col-sm"><b>Political Leaning:</b></div>
+                <div style="margin: 5%;" class="tab-pane fade" id="gun-violence" role="tabpanel" aria-labelledby="gun-violence-tab">
+                    <h2>Explore news frames of the gun violence issue in the U.S. news coverage</h2>
+                    <div class="spacer"></div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <h3>Filter by:</h3>
                                 </div>
-                                <div class="row">
-                                    <div style="margin-left: 5%" class="col-sm">
-                                        <input id="left" class="form-check-input left" type="checkbox" value="left" onclick="check_clicked('left')">
-                                        <label for="left" class="form-check-label">Left</label>
+                            </div>
+                            <div class="row">
+                                <!--  POLITICAL LEANING  -->
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-sm"><b>Political Leaning:</b></div>
+                                    </div>
+                                    <div class="row">
+                                        <div style="margin-left: 5%" class="col-sm">
+                                            <input id="left" class="form-check-input left" type="checkbox" value="left" onclick="check_clicked('left')">
+                                            <label for="left" class="form-check-label">Liberal Media</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div style="margin-left: 5%" class="col-sm">
+                                            <input id="right" class="form-check-input right" type="checkbox" value="right" onclick="check_clicked('right')">
+                                            <label for="right" class="form-check-label">Conservative Media</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div style="margin-left: 5%" class="col-sm">
+                                            <input id="none" class="form-check-input neutral" type="checkbox" value="neutral" onclick="check_clicked('neutral')">
+                                            <label for="none" class="form-check-label">Mainstream Media</label>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div style="margin-left: 5%" class="col-sm">
-                                        <input id="right" class="form-check-input right" type="checkbox" value="right" onclick="check_clicked('right')">
-                                        <label for="right" class="form-check-label">Right</label>
+                                <!--  YEAR FILTER  -->
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-sm"><b>Year:</b></div>
                                     </div>
+                                    <div class="row">
+                                        <div style="margin-left: 5%" class="col-sm">
+                                            <input id="2016" class="form-check-input 2016" type="checkbox" value="2016" onclick="check_clicked('2016')">
+                                            <label for="2016" class="form-check-label">2016</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div style="margin-left: 5%" class="col-sm">
+                                            <input id="2017" class="form-check-input 2017" type="checkbox" value="2017" onclick="check_clicked('2017')">
+                                            <label for="2017" class="form-check-label">2017</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div style="margin-left: 5%" class="col-sm">
+                                            <input id="2018" class="form-check-input 2018" type="checkbox" value="2018" onclick="check_clicked('2018')">
+                                            <label for="2018" class="form-check-label">2018</label>
+                                        </div>
+                                    </div>
+
                                 </div>
-                                <div class="row">
-                                    <div style="margin-left: 5%" class="col-sm">
-                                        <input id="none" class="form-check-input neutral" type="checkbox" value="neutral" onclick="check_clicked('neutral')">
-                                        <label for="none" class="form-check-label">None</label>
-                                    </div>
+                            </div>
+                            <!--  CHARTS  -->
+                            <div class="row">
+                                <div style="padding: 0;" class="col">
+                                    <!-- d3 pie chart here -->
+                                    <div id="gunv-chart" class="chart"></div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-sm"><b>Filter by year:</b></div>
-                                </div>
-                                <div class="row">
-                                    <div style="margin-left: 5%" class="col-sm">
-                                        <input id="2016" class="form-check-input 2016" type="checkbox" value="2016" onclick="check_clicked('2016')">
-                                        <label for="2016" class="form-check-label">2016</label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div style="margin-left: 5%" class="col-sm">
-                                        <input id="2017" class="form-check-input 2017" type="checkbox" value="2017" onclick="check_clicked('2017')">
-                                        <label for="2017" class="form-check-label">2017</label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div style="margin-left: 5%" class="col-sm">
-                                        <input id="2018" class="form-check-input 2018" type="checkbox" value="2018" onclick="check_clicked('2018')">
-                                        <label for="2018" class="form-check-label">2018</label>
-                                    </div>
-                                </div>
-                                <br><br>
-                                <div class="card" style="width: 18rem;">
-                                    <div class="card-header">News Sites</div>
-                                    <ul id="news-list" class="list-group list-group-flush"></ul>
-                                </div>
                             </div>
-                            <div style="padding: 0;" class="col-8">
-                                <!-- d3 charts here -->
-                                <div id="gunv-chart" class="chart"></div>
-                                <div id="gunv-bars" class="bar-graph"></div>
+                            <div class="row">
+                                <div style="text-align: center; padding: 0;" class="col">
+                                    <!-- d3 bar chart here -->
+                                    <div id="gunv-bars" class="bar-graph"></div>
+                                </div>
                             </div>
                         </div>
+                        <div class="col">
+                            <div class="spacer-l"></div>
+                            <div class="card pull-right" style="width: 18rem;">
+                                <div class="card-header">News Sites</div>
+                                <ul id="news-list" class="list-group list-group-flush"></ul>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-                <div class="card-footer text-right"></div>
             </div>
+            <div class="card-footer text-right"></div>
         </div>
+    </div>
     </body>
 </html>
