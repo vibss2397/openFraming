@@ -78,6 +78,8 @@ $(document).ready(function() {
                 notify_at_email: $('#tm-email').val(),
                 language: $('#tm-lang').val()
             };
+            Object.assign(postData, getPreprocessingOptions()); // add preprocessing info
+
             $.ajax({
                 url: POST_TOPIC_MODEL,
                 type: 'POST',
@@ -90,11 +92,6 @@ $(document).ready(function() {
                     const POST_TM_TRAINING_FILE = `${BASE_URL}/topic_models/${data.topic_model_id}/training/file`;
                     let fileFD = new FormData();
                     fileFD.append('file', document.getElementById("tm-training-invisible").files[0]);
-
-                    let preprocess = getPreprocessingOptions();
-                    for (let key in preprocess) {
-                        fileFD.append(key, preprocess[key]);
-                    }
 
                     $.ajax({
                         url: POST_TM_TRAINING_FILE,
