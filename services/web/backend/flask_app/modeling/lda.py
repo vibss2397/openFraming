@@ -100,10 +100,10 @@ class Corpus(object):
         
         self.processing_to_do = processing_to_do
         self.phrases_to_join = phrases_to_join
-        if(len(self.phrases_to_join)>0): self.processing_to_do['join_phrases'] =  True
+        # if(len(self.phrases_to_join)>0): self.processing_to_do['join_phrases'] =  True
         self.language = language
         self.phrases_to_remove = phrases_to_remove
-        if(len(self.phrases_to_remove)>0): self.processing_to_do['remove_phrases'] = True
+        # if(len(self.phrases_to_remove)>0): self.processing_to_do['remove_phrases'] = True
         self.dont_stem = dont_stem
 
         self.min_word_length = min_word_length        
@@ -113,7 +113,7 @@ class Corpus(object):
         punctuation_no_underscore.add("”")
         punctuation_no_underscore.remove("_")
         self.punctuation = punctuation_no_underscore | extra_punctuation
-        self.processing_to_do['remove_punctuation_and_digits'] = True
+        # self.processing_to_do['remove_punctuation_and_digits'] = True
         self.df_docs[Settings.STEMMED_CONTENT_COL] = self.df_docs[
             self.content_column_name
         ].apply(lambda b: b.lower())
@@ -125,9 +125,9 @@ class Corpus(object):
                 "No stopwords exist for language {}!".format(self.language)
             )
         self.processing_to_do['remove_stopwords'] = True
-        if(language=='english'):
-            self.processing_to_do.get('lemmatize_content', True)
-            self.processing_to_do.get('remove_short_words', True)
+        # if(language=='english'):
+        #     self.processing_to_do.get('lemmatize_content', True)
+        #     self.processing_to_do.get('remove_short_words', True)
 
         self.stopwords += extra_stopwords
         preprocessing_completed = []

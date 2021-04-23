@@ -42,7 +42,15 @@ class TopicModelTrainingTaskArgs(TT.TypedDict):
     fname_topics_by_doc: str
     iterations: int
     mallet_bin_directory: str
+    language: str
 
+class TopicModelProcessingOptions(TT.TypedDict):
+    remove_stopwords: bool
+    extra_stopwords: T.List[str]
+    phrases_to_join: T.List[str]
+    remove_punctuation: bool
+    do_stemming: bool
+    do_lemmatizing: bool
 
 class QueueManager(object):
     def __init__(self) -> None:
@@ -116,7 +124,14 @@ class QueueManager(object):
         fname_keywords: str,
         fname_topics_by_doc: str,
         mallet_bin_directory: str,
-        iterations: int = 1000,
+        language: str,
+        remove_stopwords: bool,
+        extra_stopwords: list,
+        phrases_to_join: list,
+        remove_punctuation: bool,
+        do_stemming: bool,
+        do_lemmatizing: bool,
+        iterations: int = 1000
     ) -> None:
         logger.info("Enqueued lda training with pickle_data.")
 
@@ -129,6 +144,15 @@ class QueueManager(object):
                 fname_topics_by_doc=fname_topics_by_doc,
                 iterations=iterations,
                 mallet_bin_directory=mallet_bin_directory,
+                language=language
+            ),
+            TopicModelProcessingOptions(
+                remove_stopwords=remove_stopwords,
+                extra_stopwords=[] if extra_stopwords is None else extra_stopwords,
+                phrases_to_join=[] if phrases_to_join is None else phrases_to_join,
+                remove_punctuation=remove_punctuation,
+                do_stemming=do_stemming,
+                do_lemmatizing=do_lemmatizing,
             ),
             job_timeout=-1,
         )
