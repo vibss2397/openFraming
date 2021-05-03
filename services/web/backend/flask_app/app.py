@@ -323,7 +323,6 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         classifier = models.Classifier.get(
             models.Classifier.classifier_id == classifier_id
         )
-
         queue_manager: QueueManager = current_app.queue_manager
 
         # TODO: Add a check to make sure model training didn't start already and crashed
@@ -357,8 +356,8 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
             table_data: A list of lists of length 2.
         """
         # TODO: Write tests for all of these!
-
-        table = utils.Validate.spreadsheet_and_get_table(file_)
+        
+        table = utils.Validate.spreadsheet_and_get_table2(file_)
 
         utils.Validate.table_has_no_empty_cells(table)
         utils.Validate.table_has_num_columns(table, 2)
