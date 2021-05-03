@@ -4,13 +4,12 @@ import json
 
 """Classifier Part"""
 # Will do later.
-
+"""<------ run from here ----->"""
 # /api/classifiers post
 """
-category_names = ['Politics', 'Gun control', 'Public opinion']
-# category_names = ['Politics', '2nd Amendment rights', 'Gun control', 
-#     'Public opinion', 'Mental health', 'School or public space safety', 
-#     'Society', 'Race', 'Economic consequences']
+category_names = ['Politics', '2nd Amendment rights', 'Gun control', 
+    'Public opinion', 'Mental health', 'School or public space safety', 
+    'Society', 'Race', 'Economic consequences']
 
 data = {
     "name": "sample classifier", "notify_at_email": "vibs97@bu.edu",
@@ -27,10 +26,13 @@ print(res.text)
 """
 
 # /api/classifiers/1/training/file post
+"""
 fil = open('testing_files/train_classifier.csv', 'r')
 data = {"file": fil}
 res = requests.post('http://0.0.0.0:5000/api/classifiers/6/training/file', files=data)
 print(res.text)
+"""
+"""<------ run till here ----->"""
 
 """Topic Modelling Part"""
 # /api/topic_models post
