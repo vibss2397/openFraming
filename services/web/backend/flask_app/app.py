@@ -66,6 +66,7 @@ class SupportSpreadsheetFileType(object):
 
         if file_type == file_path.suffix:
             return file_path
+            print('here')
         elif file_type in Settings.SUPPORTED_NON_CSV_FORMATS:
             file_path_with_type = file_path.parent / (file_path.stem + file_type)
             with file_path.open() as f:
@@ -73,9 +74,11 @@ class SupportSpreadsheetFileType(object):
                     f, dtype=object, header=None, index_col=False, na_filter=False
                 )
 
-            excel_writer = pd.ExcelWriter(file_path_with_type)
-            df.to_excel(excel_writer, index=False, header=False)
-            excel_writer.save()
+            # excel_writer = pd.ExcelWriter(file_path_with_type)
+            # df.to_excel(excel_writer, index=False, header=False)
+            # excel_writer.save()
+            df.to_csv(file_path_with_type)
+            print('here2')
             return file_path_with_type
         else:
             raise RuntimeError("Unknown/malformed file type passed: " + file_type)
@@ -528,16 +531,16 @@ class ClassifiersTestSetsPredictions(
 
             args = self.reqparse.parse_args()
             file_type_with_dot = "." + args["file_type"]
-
-            test_file_with_file_type = self._get_cached_version_with_file_type(
-                test_file, file_type=file_type_with_dot
-            )
-            name_for_file = f"Classifier_{test_set.classifier.name}-test_set_{test_set.name}{file_type_with_dot}"
-            return send_file(
-                test_file_with_file_type,
-                as_attachment=True,
-                attachment_filename=name_for_file,
-            )
+            return {'a': file_type_with_dot}
+            # test_file_with_file_type = self._get_cached_version_with_file_type(
+            #     test_file, file_type=file_type_with_dot
+            # )
+            # name_for_file = f"Classifier_{test_set.classifier.name}-test_set_{test_set.name}{file_type_with_dot}"
+            # return send_file(
+            #     test_file_with_file_type,
+            #     as_attachment=True,
+            #     attachment_filename=name_for_file,
+            # )
 
 
 class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):
@@ -618,7 +621,7 @@ class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):
             table_data: A list of lists of length 2.
         """
 
-        table = utils.Validate.spreadsheet_and_get_table(file_)
+        table = utils.Validate.spreadsheet_and_get_table2(file_)
 
         utils.Validate.table_has_no_empty_cells(table)
         utils.Validate.table_has_num_columns(table, 1)
