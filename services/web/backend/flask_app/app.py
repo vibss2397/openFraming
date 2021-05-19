@@ -35,6 +35,7 @@ from flask_app.modeling.queue_manager import QueueManager
 from flask_app.settings import needs_settings_init
 from flask_app.settings import Settings
 from flask_app.version import Version
+import os
 
 API_URL_PREFIX = "/api"
 
@@ -74,10 +75,9 @@ class SupportSpreadsheetFileType(object):
                     f, dtype=object, header=None, index_col=False, na_filter=False
                 )
 
-            # excel_writer = pd.ExcelWriter(file_path_with_type)
-            # df.to_excel(excel_writer, index=False, header=False)
-            # excel_writer.save()
-            df.to_csv(file_path_with_type)
+            excel_writer = pd.ExcelWriter(file_path_with_type)
+            df.to_excel(excel_writer, index=False, header=False)
+            excel_writer.save()
             print('here2')
             return file_path_with_type
         else:
@@ -209,7 +209,7 @@ class OneClassifier(ClassifierRelatedResource):
 
 class Something(Resource):
     def get(self):
-        return {'hello': 'world'}
+        return {'hello': 'world', 'a': Settings.SERVER_NAME}
 
 
 
@@ -530,17 +530,17 @@ class ClassifiersTestSetsPredictions(
             )
 
             args = self.reqparse.parse_args()
-            file_type_with_dot = "." + args["file_type"]
-            return {'a': file_type_with_dot}
-            # test_file_with_file_type = self._get_cached_version_with_file_type(
-            #     test_file, file_type=file_type_with_dot
-            # )
-            # name_for_file = f"Classifier_{test_set.classifier.name}-test_set_{test_set.name}{file_type_with_dot}"
-            # return send_file(
-            #     test_file_with_file_type,
-            #     as_attachment=True,
-            #     attachment_filename=name_for_file,
-            # )
+            # file_type_with_dot = "." + args["file_type"]
+            file_type_with_dot = ".csv"
+            test_file_with_file_type = self._get_cached_version_with_file_type(
+                test_file, file_type=file_type_with_dot
+            )
+            name_for_file = f"Classifier_{test_set.classifier.name}-test_set_{test_set.name}{file_type_with_dot}"
+            return send_file(
+                test_file_with_file_type,
+                as_attachment=True,
+                attachment_filename=name_for_file,
+            )
 
 
 class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):

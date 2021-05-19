@@ -25,7 +25,7 @@ print(res.text)
 """
 
 # /api/classifiers/1/training/file post
-"""
+""" 
 fil = open('testing_files/train_classifier.csv', 'r')
 data = {"file": fil}
 res = requests.post('http://0.0.0.0:5000/api/classifiers/1/training/file', files=data)
@@ -37,7 +37,7 @@ print(res.text)
 data = {
     "test_set_name": "sample classifier_training_Set2", "notify_at_email": "vibs97@bu.edu"
 }
-res = requests.post('http://0.0.0.0:5000/api/classifiers/7/test_sets/', json=data)
+res = requests.post('http://0.0.0.0:5000/api/classifiers/1/test_sets/', json=data)
 print(res.text)
 """
 
@@ -47,18 +47,17 @@ res = requests.get('http://0.0.0.0:5000/api/classifiers/7/test_sets')
 print(res.text)
 """
 
-# /api/classifiers/1/test_sets/1/predictions get
-"""
-res = requests.get('http://0.0.0.0:5000/api/classifiers/7/test_sets/1/predictions')
-"""
-
-
 # /api/classifiers/1/test_sets/1/file/ get
 """
 fil = open('testing_files/test_classifier.csv', 'r')
 data = {"file": fil}
-res = requests.post('http://0.0.0.0:5000/api/classifiers/7/test_sets/2/file',files=data)
+res = requests.post('http://0.0.0.0:5000/api/classifiers/1/test_sets/2/file',files=data)
 print(res.text)
+"""
+
+# /api/classifiers/1/test_sets/1/predictions get
+"""
+res = requests.get('http://0.0.0.0:5000/api/classifiers/7/test_sets/1/predictions')
 """
 
 
