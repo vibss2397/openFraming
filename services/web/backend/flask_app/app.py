@@ -35,6 +35,7 @@ from flask_app.modeling.queue_manager import QueueManager
 from flask_app.settings import needs_settings_init
 from flask_app.settings import Settings
 from flask_app.version import Version
+import os
 
 API_URL_PREFIX = "/api"
 
@@ -66,6 +67,7 @@ class SupportSpreadsheetFileType(object):
 
         if file_type == file_path.suffix:
             return file_path
+            print('here')
         elif file_type in Settings.SUPPORTED_NON_CSV_FORMATS:
             file_path_with_type = file_path.parent / (file_path.stem + file_type)
             with file_path.open() as f:
@@ -76,6 +78,7 @@ class SupportSpreadsheetFileType(object):
             excel_writer = pd.ExcelWriter(file_path_with_type)
             df.to_excel(excel_writer, index=False, header=False)
             excel_writer.save()
+            print('here2')
             return file_path_with_type
         else:
             raise RuntimeError("Unknown/malformed file type passed: " + file_type)
@@ -206,7 +209,7 @@ class OneClassifier(ClassifierRelatedResource):
 
 class Something(Resource):
     def get(self):
-        return {'hello': 'world'}
+        return {'hello': 'world', 'a': Settings.SERVER_NAME}
 
 
 
@@ -323,7 +326,6 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         classifier = models.Classifier.get(
             models.Classifier.classifier_id == classifier_id
         )
-
         queue_manager: QueueManager = current_app.queue_manager
 
         # TODO: Add a check to make sure model training didn't start already and crashed
@@ -357,8 +359,8 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
             table_data: A list of lists of length 2.
         """
         # TODO: Write tests for all of these!
-
-        table = utils.Validate.spreadsheet_and_get_table(file_)
+        
+        table = utils.Validate.spreadsheet_and_get_table2(file_)
 
         utils.Validate.table_has_no_empty_cells(table)
         utils.Validate.table_has_num_columns(table, 2)
@@ -528,8 +530,8 @@ class ClassifiersTestSetsPredictions(
             )
 
             args = self.reqparse.parse_args()
-            file_type_with_dot = "." + args["file_type"]
-
+            # file_type_with_dot = "." + args["file_type"]
+            file_type_with_dot = ".csv"
             test_file_with_file_type = self._get_cached_version_with_file_type(
                 test_file, file_type=file_type_with_dot
             )
@@ -619,7 +621,7 @@ class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):
             table_data: A list of lists of length 2.
         """
 
-        table = utils.Validate.spreadsheet_and_get_table(file_)
+        table = utils.Validate.spreadsheet_and_get_table2(file_)
 
         utils.Validate.table_has_no_empty_cells(table)
         utils.Validate.table_has_num_columns(table, 1)
