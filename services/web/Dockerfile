@@ -56,13 +56,11 @@ ENV PATH $JAVA_HOME/bin:$PATH
 
 # backwards compatibility shim
 RUN { echo '#/bin/sh'; echo 'echo "$JAVA_HOME"'; } > /usr/local/bin/docker-java-home && chmod +x /usr/local/bin/docker-java-home && [ "$JAVA_HOME" = "$(docker-java-home)" ]
-
 # https://jdk.java.net/
 # >
 # > Java Development Kit builds, from Oracle
 # >
 ENV JAVA_VERSION 16-ea+26
-
 RUN set -eux; \
 	\
 	arch="$(dpkg --print-architecture)"; \
