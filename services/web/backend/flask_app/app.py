@@ -164,19 +164,19 @@ class ClassifierRelatedResource(BaseResource):
             "not_begun", "error_encountered", "completed", "training"
         ] = "not_begun"
         if clsf.train_set is not None:
-            assert clsf.dev_set is not None
+            # assert clsf.dev_set is not None
             if clsf.train_set.training_or_inference_completed:
-                assert clsf.dev_set.training_or_inference_completed
-                assert clsf.dev_set.metrics is not None
+                # assert clsf.dev_set.training_or_inference_completed
+                assert clsf.train_set.metrics is not None
                 status = "completed"
                 metrics = ClassifierMetricsJson(
-                    accuracy=clsf.dev_set.metrics.accuracy,
-                    macro_f1_score=clsf.dev_set.metrics.macro_f1_score,
-                    macro_precision=clsf.dev_set.metrics.macro_precision,
-                    macro_recall=clsf.dev_set.metrics.macro_recall,
+                    accuracy=clsf.train_set.metrics.accuracy,
+                    macro_f1_score=clsf.train_set.metrics.macro_f1_score,
+                    macro_precision=clsf.train_set.metrics.macro_precision,
+                    macro_recall=clsf.train_set.metrics.macro_recall,
                 )
             elif clsf.train_set.error_encountered:
-                assert clsf.dev_set.error_encountered
+                # assert clsf.dev_set.error_encountered
                 status = "error_encountered"
             else:
                 status = "training"
@@ -304,22 +304,22 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         )
         file_.close()
         # Split into train and dev
-        ss = model_selection.StratifiedShuffleSplit(n_splits=1, test_size=0.2)
-        X, y = zip(*table_data)
-        train_indices, dev_indices = next(ss.split(X, y))
+        # ss = model_selection.StratifiedShuffleSplit(n_splits=1, test_size=0)
+        # X, y = zip(*table_data)
+        # train_indices, dev_indices = next(ss.split(X, y))
 
-        train_data = [table_data[i] for i in train_indices]
-        dev_data = [table_data[i] for i in dev_indices]
+        train_data = [table_data[i] for i in range(len(table_data))]
+        # dev_data = [table_data[i] for i in dev_indices]
 
         train_file = utils.Files.classifier_train_set_file(classifier_id)
         self._write_headers_and_data_to_csv(table_headers, train_data, train_file)
-        dev_file = utils.Files.classifier_dev_set_file(classifier_id)
-        self._write_headers_and_data_to_csv(table_headers, dev_data, dev_file)
+        # dev_file = utils.Files.classifier_dev_set_file(classifier_id)
+        # self._write_headers_and_data_to_csv(table_headers, dev_data, dev_file)
 
         classifier.train_set = models.LabeledSet()
-        classifier.dev_set = models.LabeledSet()
+        # classifier.dev_set = models.LabeledSet()
         classifier.train_set.save()
-        classifier.dev_set.save()
+        # classifier.dev_set.save()
         classifier.save()
 
         # Refresh classifier
@@ -335,7 +335,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
             labels=classifier.category_names,
             model_path=Settings.TRANSFORMERS_MODEL,
             train_file=str(utils.Files.classifier_train_set_file(classifier_id)),
-            dev_file=str(utils.Files.classifier_dev_set_file(classifier_id)),
+            dev_file=None,
             cache_dir=str(Settings.TRANSFORMERS_CACHE_DIRECTORY),
             output_dir=str(
                 utils.Files.classifier_output_dir(classifier_id, ensure_exists=True)
@@ -484,11 +484,11 @@ class ClassifiersTestSets(ClassifierTestSetRelatedResource):
             raise NotFound("classifier not found.")
 
         if classifier.train_set is None:
-            assert classifier.dev_set is None
+            # assert classifier.dev_set is None
             raise BadRequest("This classifier has not been trained yet.")
         elif not classifier.train_set.training_or_inference_completed:
-            assert classifier.dev_set is not None
-            assert not classifier.dev_set.training_or_inference_completed
+            # assert classifier.dev_set is not None
+            # assert not classifier.dev_set.training_or_inference_complete
             raise BadRequest("This classifier's training has not been completed yet.")
 
         test_set = models.TestSet.create(

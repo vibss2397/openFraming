@@ -6,6 +6,7 @@ import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 import typing_extensions as TT
 from sklearn.metrics import classification_report  # type: ignore
+from sklearn.model_selection import StratifiedKFold
 from torch.utils.data.dataset import Dataset
 from transformers import AutoConfig
 from transformers import AutoModelForSequenceClassification
@@ -20,6 +21,9 @@ from transformers.trainer_utils import PredictionOutput
 from flask_app.modeling.lda import CSV_EXTENSIONS
 from flask_app.settings import Settings
 
+# from modeling.lda import CSV_EXTENSIONS
+# from settings import Settings
+import os
 # Named as such to distinguish from db.ClassifierMetrics
 ClassifierMetricsJson = TT.TypedDict(
     "ClassifierMetricsJson",
@@ -130,7 +134,10 @@ class ClassifierModel(object):
         self.cache_dir = cache_dir
         self.model_path = model_path
         self.output_dir = output_dir
-        self.num_train_epochs = num_train_epochs
+        # self.num_train_epochs = num_train_epochs
+        # self.num_splits = 5
+        self.num_train_epochs = 1
+        self.num_splits = 3
 
         self.labels = labels
         self.num_labels = len(labels)
@@ -139,6 +146,7 @@ class ClassifierModel(object):
         self.label_map = {label: i for i, label in enumerate(self.labels)}
         self.label_map_reverse = {i: label for i, label in enumerate(self.labels)}
 
+        self.average_metrics = {}
         self.config = AutoConfig.from_pretrained(
             self.model_path,
             num_labels=self.num_labels,
@@ -159,10 +167,15 @@ class ClassifierModel(object):
             self.train_dataset = self.make_dataset(
                 train_file, Settings.CONTENT_COL, Settings.LABEL_COL,
             )
+            self.train_dataset_path = train_file
+        else:
+            self.train_dataset = None
         if dev_file is not None:
             self.eval_dataset = self.make_dataset(
                 dev_file, Settings.CONTENT_COL, Settings.LABEL_COL,
             )
+        else:
+            self.eval_dataset = None
 
     def compute_metrics(self, p: EvalPrediction) -> ClassifierMetricsJson:
         """
@@ -207,6 +220,12 @@ class ClassifierModel(object):
             content_column,
             label_column,
         )
+    
+    def set_metrics(self, metric) -> None:
+        for key in metric:
+            if key not in self.average_metrics:
+                self.average_metrics[key] = 0
+            self.average_metrics[key] += metric[key] / self.num_splits
 
     def train(self) -> None:
         """Train a BERT-based model, using the training set to train & the eval set as
@@ -221,11 +240,31 @@ class ClassifierModel(object):
                 do_eval=True,
                 evaluate_during_training=True,
                 output_dir=self.output_dir,
+                overwrite_output_dir=True,
                 num_train_epochs=self.num_train_epochs,
             ),
             train_dataset=self.train_dataset,
             eval_dataset=self.eval_dataset,
             compute_metrics=self.compute_metrics,
+        )
+        self.trainer.train(model_path=self.model_path)
+        self.trainer.save_model()
+        self.tokenizer.save_pretrained(self.trainer.args.output_dir)
+    
+    def train_no_evaluate(self) -> None:
+        """Train a BERT-based model, using the training set to train.
+        """
+        assert self.train_dataset is not None, "train_file was not provided!"
+
+        self.trainer = Trainer(
+            model=self.model,
+            args=TrainingArguments(
+                do_train=True,
+                output_dir=self.output_dir,
+                overwrite_output_dir=True,
+                num_train_epochs=self.num_train_epochs,
+            ),
+            train_dataset=self.train_dataset,
         )
         self.trainer.train(model_path=self.model_path)
         self.trainer.save_model()
@@ -252,6 +291,64 @@ class ClassifierModel(object):
                 new_key = key.replace("eval_", "")
                 new_metrics[new_key] = val
 
+        return ClassifierMetricsJson(
+            {
+                "accuracy": new_metrics["accuracy"],
+                "macro_f1_score": new_metrics["macro_f1_score"],
+                "macro_recall": new_metrics["macro_recall"],
+                "macro_precision": new_metrics["macro_precision"],
+            }
+        )
+
+    def do_cross_validation(self):
+        """
+        Performs k-fold cross validation on the data provided by the user
+        """
+        assert self.train_dataset_path is not None # train file not provided
+
+        train_dset_df = pd.read_csv(self.train_dataset_path)
+        train_dset_headers = train_dset_df.columns
+        train_dset_table = train_dset_df.to_numpy() 
+
+        ss = StratifiedKFold(n_splits=self.num_splits, shuffle=True)
+        X, y = zip(*train_dset_table)
+        split_counter = 0
+
+        for train_indices, dev_indices in ss.split(X, y):
+            print('split ', split_counter + 1, ' out of ', self.num_splits, '-----')
+
+            data_train = pd.DataFrame([train_dset_table[i] for i in train_indices], 
+                columns = train_dset_headers)
+            data_dev = pd.DataFrame([train_dset_table[i] for i in dev_indices],
+                columns = train_dset_headers)
+            
+            train_tempfile_path = tempfile.mkstemp(suffix='.csv', prefix='kfold')
+            dev_tempfile_path = tempfile.mkstemp(suffix='.csv', prefix='kfolddev')
+            data_train.to_csv(train_tempfile_path[1])
+            data_dev.to_csv(dev_tempfile_path[1])
+
+            self.train_dataset = self.make_dataset(train_tempfile_path[1], 
+                Settings.CONTENT_COL, Settings.LABEL_COL,)
+            self.eval_dataset = self.make_dataset(dev_tempfile_path[1],
+                Settings.CONTENT_COL, Settings.LABEL_COL,)
+
+            metrics = self.train_and_evaluate() #training is done here.
+            self.set_metrics(metrics)
+            
+            os.remove(train_tempfile_path[1])
+            os.remove(dev_tempfile_path[1])
+            
+            split_counter += 1
+        return self.average_metrics
+
+    def perform_cv_and_train(self):
+        print('hererer')
+        new_metrics = self.do_cross_validation()
+        print('done with cv preparing for training with whole dataset...')
+        self.train_dataset = self.make_dataset(
+                self.train_dataset_path, Settings.CONTENT_COL, Settings.LABEL_COL,
+            )
+        self.train_no_evaluate()
         return ClassifierMetricsJson(
             {
                 "accuracy": new_metrics["accuracy"],

@@ -77,7 +77,7 @@ def do_classifier_related_task(
             models.Classifier.classifier_id == task_args["classifier_id"]
         )
         assert clsf.train_set is not None
-        assert clsf.dev_set is not None
+        # assert clsf.dev_set is not None
 
         try:
             classifier_model = ClassifierModel(
@@ -89,16 +89,16 @@ def do_classifier_related_task(
                 cache_dir=task_args["cache_dir"],
                 output_dir=task_args["output_dir"],
             )
-            metrics = classifier_model.train_and_evaluate()
+            metrics = classifier_model.perform_cv_and_train()
         except BaseException as e:
             logger.critical(f"Error while doing classifier training task: {e}")
             clsf.train_set.error_encountered = True
-            clsf.dev_set.error_encountered = True
+            # clsf.dev_set.error_encountered = True
         else:
             clsf.train_set.training_or_inference_completed = True
-            clsf.dev_set.training_or_inference_completed = True
-            clsf.dev_set.metrics = models.ClassifierMetrics(**metrics)
-            clsf.dev_set.metrics.save()
+            # clsf.dev_set.training_or_inference_completed = True
+            clsf.train_set.metrics = models.ClassifierMetrics(**metrics)
+            clsf.train_set.metrics.save()
             emailer = emails.Emailer()
             emailer.send_email(
                 email_template_name="classifier_training_finished",
@@ -108,7 +108,7 @@ def do_classifier_related_task(
             )
 
         finally:
-            clsf.dev_set.save()
+            # clsf.dev_set.save()
             clsf.train_set.save()
             clsf.save()
 

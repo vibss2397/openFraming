@@ -20,3 +20,4 @@ torch==1.5.0+cpu
 torchvision==0.6.0
 typing-extensions==3.7.4.2
 peewee==3.13.3
+tensorboard
