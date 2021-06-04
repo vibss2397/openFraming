@@ -38,7 +38,7 @@ $(document).ready(function() {
             const POST_CLASSIFIER = `${BASE_URL}/classifiers/`;
             const categories = cleanTextboxInput($('#fc-labels').val());
             let postData = {
-                classifier_name: $('#fc-name').val(),
+                name: $('#fc-name').val(),
                 category_names: categories,
                 notify_at_email: $('#fc-email').val()
             };

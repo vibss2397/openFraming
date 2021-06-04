@@ -66,7 +66,7 @@ res = requests.get('http://0.0.0.0:5000/api/classifiers/7/test_sets/1/prediction
 """
 data = {
     "topic_model_name": "all things must pass", "num_topics": 10, 
-    "notify_at_email": "vibs97@bu.edu", "language": "french",
+    "notify_at_email": "vibs97@bu.edu", "language": "english",
     "remove_stopwords": True, "remove_punctuation": True, 
     "do_stemming": False, "do_lemmatizing": False
     }
@@ -83,10 +83,10 @@ print(res.text)
 # api/topic_models/1/training/file/
 
 """
-fil = open('testing_files/train_fr.csv', 'r')
+fil = open('testing_files/dev.csv', 'r')
 data = {"file": fil} 
 # print(pd.read_csv(fil))
-res = requests.post('http://0.0.0.0:5000/api/topic_models/10/training/file', files=data)
+res = requests.post('http://0.0.0.0:5000/api/topic_models/9/training/file', files=data)
 print(res.text)
 """
 

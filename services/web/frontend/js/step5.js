@@ -48,8 +48,8 @@ $(document).ready(function() {
             // POST request for topic model
             const POST_TEST_SET = `${BASE_URL}/classifiers/${id}/test_sets/`;
             let postData = {
-                test_set_name: $('#fc-name').val(),
-                notify_at_email: $('#fc-email').val()
+                test_set_name: $('#pt-name').val(),
+                notify_at_email: $('#pt-email').val()
             };
             $.ajax({
                 url: POST_TEST_SET,

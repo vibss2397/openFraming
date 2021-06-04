@@ -7,13 +7,13 @@
 // moved here for readability
 function getPreprocessingOptions() {
    return {
-       remove_stops: $('#dc-stops').is(":checked"),
-       additional_stops: cleanTextboxInput($('#dc-more-stops').val()),
-       merge: cleanTextboxInput($('#dc-merge').val()),
-       remove_punct: $('#dc-punct').is(":checked"),
-       stemming: $('#dc-stem').is(":checked"),
-       lemmatization: $('#dc-lemma').is(":checked"),
-       min_word_length: $('#dc-min-words').val(),
+       remove_stopwords: $('#dc-stops').is(":checked"),
+       extra_stopwords: cleanTextboxInput($('#dc-more-stops').val()),
+       phrases_to_join: cleanTextboxInput($('#dc-merge').val()),
+       remove_punctuation: $('#dc-punct').is(":checked"),
+       do_stemming: $('#dc-stem').is(":checked"),
+       do_lemmatizing: $('#dc-lemma').is(":checked"),
+    //    min_word_length: $('#dc-min-words').val(),
     }
 }
 
@@ -76,7 +76,7 @@ $(document).ready(function() {
                 num_topics: $('#tm-num').val(),
                 num_keywords: $('#tm-keywords').val(),
                 notify_at_email: $('#tm-email').val(),
-                language: $('#tm-lang').val()
+                language: $('#tm-lang').val().toLowerCase()
             };
             Object.assign(postData, getPreprocessingOptions()); // add preprocessing info
 
