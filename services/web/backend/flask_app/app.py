@@ -1012,12 +1012,12 @@ class TopicModelsTopicsPreview(TopicModelRelatedResource):
                         examples_per_topic, keywords_per_topic
                     )
                 ],
-                "remove_stopwords": topic_mdl_status_json["processing"]["remove_stopwords"],
-                "extra_stopwords": topic_mdl_status_json["processing"]["remove_stopwords"],
-                "phrases_to_join": topic_mdl_status_json["processing"]["phrases_to_join"],
-                "remove_punctuation": topic_mdl_status_json["processing"]["remove_punctuation"],
-                "do_stemming": topic_mdl_status_json["processing"]["do_stemming"],
-                "do_lemmatizing": topic_mdl_status_json["processing"]["do_lemmatizing"],
+                "remove_stopwords": topic_mdl_status_json["remove_stopwords"],
+                "extra_stopwords": topic_mdl_status_json["remove_stopwords"],
+                "phrases_to_join": topic_mdl_status_json["phrases_to_join"],
+                "remove_punctuation": topic_mdl_status_json["remove_punctuation"],
+                "do_stemming": topic_mdl_status_json["do_stemming"],
+                "do_lemmatizing": topic_mdl_status_json["do_lemmatizing"],
             }
         )
         return topic_preview_json
