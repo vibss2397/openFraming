@@ -36,7 +36,7 @@ from flask_app.settings import needs_settings_init
 from flask_app.settings import Settings
 from flask_app.version import Version
 import os
-
+frol flask_cors import CORS
 API_URL_PREFIX = "/api"
 
 logger = logging.getLogger(__name__)
@@ -1230,6 +1230,7 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
 
     # Usually, we'd read this from app.config, but we need it to create app.config ...
     app = Flask(__name__)
+    CORS(app)
 
     # app.config["SERVER_NAME"] = Settings.SERVER_NAME
     # app.config["SERVER_NAME"] = "0.0.0.0:5000"
