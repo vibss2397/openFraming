@@ -8,8 +8,8 @@
 function getPreprocessingOptions() {
    return {
        remove_stops: $('#dc-stops').is(":checked"),
-       additional_stops: cleanTextboxInput($('#dc-more-stops')),
-       merge: cleanTextboxInput($('#dc-merge')),
+       additional_stops: cleanTextboxInput($('#dc-more-stops').val()),
+       merge: cleanTextboxInput($('#dc-merge').val()),
        remove_punct: $('#dc-punct').is(":checked"),
        stemming: $('#dc-stem').is(":checked"),
        lemmatization: $('#dc-lemma').is(":checked"),
