@@ -20,7 +20,9 @@ function getTMPreview(id) {
             }
         },
         error: function (xhr, status, err) {
-
+            console.log(xhr.responseText);
+            let error = getErrorMessage(JSON.parse(xhr.responseText).message);
+            $('#error2').html(`An error occurred while finding your topic model: ${error}`).removeClass('hidden');
         },
     });
 }
@@ -61,6 +63,18 @@ $(document).ready(function() {
 
 
     }
+
+    $('#submit2').on('click', function () {
+        if ($('#tmp-id').val() === "") {
+            $('#error2-text').html('Please enter an ID.');
+            $('#error2').removeClass('hidden');
+
+        } else {
+            $('#error2').addClass('hidden');
+            let id = $('#pt-id').val();
+            getTMPreview(id);
+        }
+    })
 
 
 });
