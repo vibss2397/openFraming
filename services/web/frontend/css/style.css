@@ -131,7 +131,7 @@ Buttons
 .btn-theme:hover{color:#fff;background-color:#8442c7;border-color:#8442c7}
 .btn-theme:focus,.btn-primary.focus{box-shadow:0 0 0 .2rem #8e47d6}
 .btn-theme.disabled,
-.btn-theme:disabled{color:#fff;background-color:#8e47d6;border-color:#8e47d6}
+.btn-theme:disabled{color:#fff;background-color:rebeccapurple;border-color:rebeccapurple}
 .btn-theme:not(:disabled):not(.disabled):active,
 .btn-theme:not(:disabled):not(.disabled).active,
 .show>.btn-theme.dropdown-toggle{color:#fff;background-color:#8e47d6;border-color:#000}

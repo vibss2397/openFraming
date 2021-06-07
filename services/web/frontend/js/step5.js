@@ -1,3 +1,36 @@
+
+/* * * * * */
+/*  DATA   */
+/* * * * * */
+
+
+function pingClassifierStatus(c_id, t_id) {
+    let stop = false;
+    let interval = setInterval(function () {
+        const GET_TEST_SET = `${BASE_URL}/classifiers/${c_id}/test_sets/${t_id}`;
+        if (stop) {
+            clearInterval(interval);
+        } else {
+            $.ajax({
+                url: GET_TEST_SET,
+                type: 'GET',
+                success: function (data) {
+                    if (data.inference_status === "completed") {
+                        stop = true;
+                        window.location.replace(`${BASE_URL}/classifiers/${c_id}/test_sets/${t_id}/predictions`);
+                    }
+                },
+                error: function (xhr, status, err) {
+                    console.log(xhr.responseText);
+                    let error = getErrorMessage(JSON.parse(xhr.responseText).message);
+                    $('#error5').html(`An error occurred while checking the status of your test set: ${error}`).removeClass('hidden');
+                }
+            });
+        }
+    }, 2000);
+}
+
+
 /* * * * * * */
 /*  BROWSER  */
 /* * * * * * */
@@ -37,6 +70,8 @@ $(document).ready(function() {
         } else {
 
             $('#error5').addClass('hidden');
+            $('#pt-spinner').show();
+            $('#submit5').addClass("disabled");
 
             let id;
             if ($('#pt-id').val() === "") {
@@ -44,7 +79,6 @@ $(document).ready(function() {
             } else {
                 id = $('#pt-id').val()
             }
-            console.log(id);
             // POST request for topic model
             const POST_TEST_SET = `${BASE_URL}/classifiers/${id}/test_sets/`;
             let postData = {
@@ -60,7 +94,9 @@ $(document).ready(function() {
                 success: function (data) {
                     console.log('success in classifier test set POST');
                     // POST request for training file
-                    const POST_PT_TESTING_FILE = `${BASE_URL}/classifiers/${data.classifier_id}/test_sets/${data.test_set_id}/file`;
+                    let c_id = data.classifier_id;
+                    let t_id = data.test_set_id;
+                    const POST_PT_TESTING_FILE = `${BASE_URL}/classifiers/${c_id}/test_sets/${t_id}/file`;
                     let fileFD = new FormData();
                     fileFD.append('file', document.getElementById("pt-testing-invisible").files[0]);
 
@@ -72,12 +108,17 @@ $(document).ready(function() {
                         contentType: false,
                         success: function(){
                             console.log('STEP 5 - success in testing file POST');
-                            $('#success5').removeClass('hidden');
+                            pingClassifierStatus(c_id, t_id);
+                            // $('#success5').removeClass('hidden');
+                            $('#pt-spinner').hide();
+                            $('#submit5').removeClass("disabled");
                         },
                         error: function (xhr, status, err) {
                             console.log(xhr.responseText);
                             let error = getErrorMessage(JSON.parse(xhr.responseText).message);
                             $('#error5').html(`An error occurred while uploading your file: ${error}`).removeClass('hidden');
+                            $('#pt-spinner').hide();
+                            $('#submit5').removeClass("disabled");
                         }
                     });
                 },
@@ -85,6 +126,8 @@ $(document).ready(function() {
                     console.log(xhr.responseText);
                     let error = getErrorMessage(JSON.parse(xhr.responseText).message);
                     $('#error5').html(`An error occurred while creating the test set: ${error}`).removeClass('hidden');
+                    $('#pt-spinner').hide();
+                    $('#submit5').removeClass("disabled");
                 }
             });
         }
@@ -101,24 +144,4 @@ $(document).ready(function() {
 function clearOptions() {
     $("input[name='policyissue']:checked").val([]);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
