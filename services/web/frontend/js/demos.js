@@ -609,7 +609,7 @@ $(document).ready(function() {
 
     // $("#step4")
 
-    d3.csv("../frontend/datasets/german_gunviolence_data.csv",function(d) {
+    d3.csv("datasets/german_gunviolence_data.csv",function(d) {
         return {
             date : parse3(d.date),
             name : d.name,
@@ -624,7 +624,7 @@ $(document).ready(function() {
         show_gunviolence();
     });
 
-    d3.csv("../frontend/datasets/covid19_US.csv", function(d) {
+    d3.csv("datasets/covid19_US.csv", function(d) {
         return {
             date : parse2(d.date),
             name : d.name,
@@ -636,7 +636,7 @@ $(document).ready(function() {
         show_covid('us');
     });
 
-    d3.csv("../frontend/datasets/covid19_KO.csv",function(d) {
+    d3.csv("datasets/covid19_KO.csv",function(d) {
         return {
             date : parse2(d.date),
             name : d.name,
