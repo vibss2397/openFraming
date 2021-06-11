@@ -92,7 +92,6 @@ $(document).ready(function() {
                     const POST_TM_TRAINING_FILE = `${BASE_URL}/topic_models/${data.topic_model_id}/training/file`;
                     let fileFD = new FormData();
                     fileFD.append('file', document.getElementById("tm-training-invisible").files[0]);
-
                     $.ajax({
                         url: POST_TM_TRAINING_FILE,
                         data: fileFD,
