@@ -57,10 +57,10 @@ class TestClassififer:
     def do_cross_validation(self):
         return self.classifier_model.perform_cv_and_train()
 
-lda_in = TestLDA()
-print(lda_in.run_topic_modelling())
+# lda_in = TestLDA()
+# print(lda_in.get_processed_dataset())
 
-# classifier = TestClassififer()
+classifier = TestClassififer()
 # print(classifier.train_and_evaluate())
 # print(classifier.get_file('dev'))
-# print(classifier.do_cross_validation())
+print(classifier.do_cross_validation())
