@@ -41,7 +41,7 @@ import os
 from flask_cors import CORS
 API_URL_PREFIX = "/api"
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 class HasReqParseProtocol(TT.Protocol):
     reqparse: reqparse.RequestParser
@@ -208,7 +208,7 @@ class OneClassifier(ClassifierRelatedResource):
 # @app.route('/something')
 class Something(Resource):
     def get(self):
-        logger.info('I have arrived here')
+        app.logger.info('I have arrived here')
         return {'hello': 'world', 'a': Settings.SERVER_NAME}
 
 
@@ -294,11 +294,11 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
                 models.Classifier.classifier_id == classifier_id
             )
         except models.Classifier.DoesNotExist:
-            logger.info('Classifier with id' + str(classifier_id) + 'not found')
+            app.logger.info('Classifier with id' + str(classifier_id) + 'not found')
             raise NotFound("classifier not found.")
 
         if classifier.train_set is not None:
-            logger.info("This classifier already has a training set.")
+            app.logger.info("This classifier already has a training set.")
             raise AlreadyExists("This classifier already has a training set.")
 
         table_headers, table_data = self._validate_training_file_and_get_data(
@@ -1227,17 +1227,17 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
     Returns:
         app: Flask() object.
     """
-    logging.basicConfig()
-    logger.setLevel(logging_level)
+    # logging.basicConfig()
+    # logger.setLevel(logging_level)
 
     # Usually, we'd read this from app.config, but we need it to create app.config ...
     app = Flask(__name__)
     CORS(app)
     
-    # gunicorn_logger = logging.getLogger('gunicorn.access')
-    # # app.logger.removeHandler(default_handler)
-    # app.logger.handlers.extend(gunicorn_logger.handlers)
-    # app.logger.setLevel(gunicorn_logger.level)
+    gunicorn_logger = logging.getLogger('gunicorn.access')
+    # app.logger.removeHandler(default_handler)
+    app.logger.handlers.extend(gunicorn_logger.handlers)
+    app.logger.setLevel(gunicorn_logger.level)
 
     app.config["SERVER_NAME"] = Settings.SERVER_NAME
     # app.config["SERVER_NAME"] = "0.0.0.0:5000"
@@ -1253,12 +1253,12 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
         database = pw.SqliteDatabase(str(Settings.DATABASE_FILE))
         models.database_proxy.initialize(database)
         with models.database_proxy.connection_context():
-            logger.info("Created tables because SQLITE file was not found.")
+            app.logger.info("Created tables because SQLITE file was not found.")
             models.database_proxy.create_tables(models.MODELS)
     else:
         database = pw.SqliteDatabase(str(Settings.DATABASE_FILE))
         models.database_proxy.initialize(database)
-        logger.info("SQLITE file found. Not creating tables")
+        app.logger.info("SQLITE file found. Not creating tables")
 
     app.queue_manager = QueueManager()
 
