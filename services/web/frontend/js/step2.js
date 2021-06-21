@@ -71,7 +71,7 @@ $(document).ready(function() {
 
         } else {
             $('#error2').addClass('hidden');
-            let id = $('#tmp-id').val();
+            let id = $('#pt-id').val();
             getTMPreview(id);
         }
     })
