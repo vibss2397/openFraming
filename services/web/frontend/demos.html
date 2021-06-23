@@ -95,19 +95,31 @@
                                     <div class="row">
                                         <div style="margin-left: 5%" class="col-sm">
                                             <input id="left" class="form-check-input left" type="checkbox" value="left" onclick="check_clicked('left')">
-                                            <label for="left" class="form-check-label">Liberal Media</label>
+                                            <label for="left" class="form-check-label position-relative">
+                                                <span>Liberal</span>
+                                                <span class="position-absolute badge bg-primary top-0 start-100 translate-middle p-2 rounded-circle">
+                                                </span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div style="margin-left: 5%" class="col-sm">
                                             <input id="right" class="form-check-input right" type="checkbox" value="right" onclick="check_clicked('right')">
-                                            <label for="right" class="form-check-label">Conservative Media</label>
+                                            <label for="right" class="form-check-label position-relative">
+                                                <span>Conservative</span>
+                                                <span class="position-absolute badge bg-danger top-0 start-100 translate-middle p-2 rounded-circle">
+                                                </span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div style="margin-left: 5%" class="col-sm">
-                                            <input id="none" class="form-check-input neutral" type="checkbox" value="neutral" onclick="check_clicked('neutral')">
-                                            <label for="none" class="form-check-label">Mainstream Media</label>
+                                            <input id="neutral" class="form-check-input neutral" type="checkbox" value="neutral" onclick="check_clicked('neutral')">
+                                            <label for="neutral" class="form-check-label position-relative">
+                                                <span>Mainstream</span>
+                                                <span class="position-absolute badge bg-success top-0 start-100 translate-middle p-2 rounded-circle">
+                                                </span>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
