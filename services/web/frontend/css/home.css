@@ -1,4 +1,7 @@
 
+/* * * * * * * * * * */
+/* ELEMENT LEVEL CSS */
+/* * * * * * * * * * */
 
 body {
     background-image: url('../images/cloud.svg');
@@ -7,39 +10,34 @@ body {
     background-position: right top;
 }
 
-.centered-container h3 {
+h3 {
     text-align: center;
-}
-
-.centered-container div.how-graphic1 {
-    margin-top: 5%;
-    margin-bottom: 5%;
-    text-align: center;
-}
-
-.centered-container div.how-graphic2 {
-    margin-top: 3.5%;
-    margin-bottom: 3.5%;
-    text-align: center;
-}
-
-.centered-container img {
-    width: 20%;
-}
-
-.centered-container a {
-    width: 75%;
-    margin: 10px;
 }
 
 p {
-    font-size: 22px;
+    font-size: 18px;
     line-height: 28px;
     letter-spacing: 0.1px;
 }
 
-.info strong{
-    color: rebeccapurple;
+/* * * * * * * * * * */
+/*  CLASS LEVEL CSS  */
+/* * * * * * * * * * */
+
+.how-line-col {
+    margin-top: 3%;
+    text-align: center;
+}
+
+.how-btn-col {
+    margin-top: 1.5%;
+    text-align: center;
+}
+
+/* always have some space below the content so that we can scroll properly*/
+.main-content-top {
+    padding: 50px 300px 50px 300px;
+    font-family: 'Roboto', sans-serif;
 }
 
 .spacer {
@@ -57,84 +55,25 @@ p {
     font-size: 1.5rem;
 }
 
+.navbar-expand-lg .navbar-nav .nav-link {
+    padding-right: 0.7rem;
+    padding-left: 0.7rem;
+}
+
+
 .navbar a {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
-/* always have some space below the content so that we can scroll properly*/
-.main-content {
-    margin-bottom: 10%;
-    padding: 50px;
-    font-family: 'Roboto', sans-serif;
+.what-text-col {
+    margin-top: 3%;
 }
 
-
-.row {
-    margin-bottom: 8px;
-    margin-left: 0;
-}
-
-.card{
-    border-radius: 8px;
-    padding: 20px;
-    display: block;
-    vertical-align: middle;
-    font-size: 19px;
-    width: 100%;
-}
-
-.card-header{
+.what-img-col {
+    margin-bottom: 2%;
+    margin-left: 10%;
     text-align: center;
 }
-
-.card-main {
-    background-color: #FFFFFF;
-    border-color:#c8c8c8;
-    padding: 0;
-}
-
-.card-text {
-    margin-top: 0;
-}
-
-
-.hidden {
-    display: none !important;
-}
-
-.horizontal-padding{
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-.scrollable {
-    width: 105%; /*card has padding*/
-    overflow-y: auto;
-    max-height: 120px;
-    padding: 0;
-}
-
-/*
-Main page table
- */
-.table > tbody > tr:first-child > td {
-    border: none;
-}
-
-
-.sticky {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 200px;
-    background: #bbb;
-    z-index: 2;
-    height: 20px;
-}
-
-/*
-Buttons
-*/
 
 /* custom button color */
 .btn-theme{color:#fff;background-color:rebeccapurple;border-color:rebeccapurple}
@@ -164,70 +103,54 @@ Buttons
 .show>.btn-outline-theme.dropdown-toggle:focus{box-shadow:0 0 0 .2rem #8e47d6}
 /* end custom button color */
 
-.navBtn{
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    background-color: transparent;
-    border: transparent;
+/* * * * * * * * */
+/* ID LEVEL CSS  */
+/* * * * * * * * */
+#head-section h3 {
+    text-align: left !important;
+}
+
+#head-section p {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+#how-section p {
+    margin-right: 0 !important;
+}
+
+#pubs-section h6 {
+    text-align: center;
+}
+
+#pubs-section p {
+    font-size: 16px;
 }
 
 
-.pull-right {
-    float: right !important;
+
+/* * * * * * */
+/* FAQ PAGE  */
+/* * * * * * */
+
+.card-header h5 {
+    text-align: left;
 }
 
-.pull-left {
-    float: left !important;
-}
-
-button:disabled {
-    cursor: not-allowed;
-}
-
-
-textarea {
-    font-family: 'Montserrat', sans-serif;
-    width:100%;
-}
-
-.logo {
-    width: auto;
-    height: 50px;
-    padding: 5px;
+.card-header button {
+    font-size: 20px;
 }
 
 
-.sidenav {
-    height: 100%;
-    width: 13%;
-    position: fixed;
-    /*z-index: 1;*/
-    top: 50px;
-    left: 0;
-    background-color: #eeeeee;
-    overflow-x: hidden;
-    padding-top: 20px;
+#faq-page.main-content-top {
+    padding: 50px !important;
+    font-family: 'Roboto', sans-serif;
 }
 
-.sidenav a {
-    padding: 6px 6px 6px 32px;
-    text-decoration: none;
-    color: rebeccapurple;
-    display: block;
+#faq-page h3 {
+    text-align: left !important;
 }
 
-
-.jump {
-    padding: 6px 6px 6px 32px;
-    color: white;
-    display: block;
-    background-color: rebeccapurple;
-}
-
-.answer {
-    padding-left: 50px;
-}
-
-.main {
-    margin-left: 200px; /* Same as the width of the sidenav */
+#faq-page ul {
+    font-size: 18px;
 }
