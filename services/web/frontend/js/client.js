@@ -1,4 +1,4 @@
-let BASE_URL = "http://" + window.location.host + "/api";
+let BASE_URL = "http://" + window.location.host + ":5000/api";
 // uncomment below to test on AWS EC2 instance
 // const BASE_URL = "http://ec2-3-90-135-165.compute-1.amazonaws.com/api";
 
