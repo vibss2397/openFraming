@@ -6,6 +6,7 @@ import re
 import typing as T
 from collections import Counter
 from pathlib import Path
+import os
 
 import pandas as pd  # type: ignore
 import peewee as pw
@@ -20,6 +21,8 @@ from flask_restful import Api  # type: ignore
 from flask_restful import reqparse
 from flask_restful import Resource
 from flask import current_app as app
+from flask_cors import CORS
+from flasgger import Swagger, swag_from
 from playhouse.flask_utils import get_object_or_404
 from sklearn import model_selection  # type: ignore
 from typing_extensions import TypedDict
@@ -37,8 +40,6 @@ from flask_app.modeling.queue_manager import QueueManager
 from flask_app.settings import needs_settings_init
 from flask_app.settings import Settings
 from flask_app.version import Version
-import os
-from flask_cors import CORS
 API_URL_PREFIX = "/api"
 
 # logger = logging.getLogger(__name__)
@@ -198,7 +199,7 @@ class ClassifierRelatedResource(BaseResource):
 class OneClassifier(ClassifierRelatedResource):
 
     url = "/classifiers/<int:classifier_id>"
-
+    @swag_from('./docs/Classifiers/get_single.yml')
     def get(self, classifier_id: int) -> ClassifierStatusJson:
         clsf = get_object_or_404(
             models.Classifier, models.Classifier.classifier_id == classifier_id
@@ -240,7 +241,8 @@ class Classifiers(ClassifierRelatedResource):
             location="json",
             help="The category names must be a list of strings that don't contain commas within them..",
         )
-
+    
+    @swag_from('./docs/Classifiers/post.yml')
     def post(self) -> ClassifierStatusJson:
         """Create a classifier."""
 
@@ -257,6 +259,7 @@ class Classifiers(ClassifierRelatedResource):
         utils.Files.classifier_dir(classifier_id=clsf.classifier_id, ensure_exists=True)
         return self._classifier_status(clsf)
 
+    @swag_from('./docs/Classifiers/get.yml')
     def get(self) -> T.List[ClassifierStatusJson]:
         """Get a list of classifiers."""
         res = [self._classifier_status(clsf) for clsf in models.Classifier.select()]
@@ -274,7 +277,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         self.reqparse.add_argument(
             name="file", type=FileStorage, required=True, location="files"
         )
-
+    @swag_from('./docs/Classifiers/post_training.yml')
     def post(self, classifier_id: int) -> ClassifierStatusJson:
         """Upload a training set for classifier, and start training.
 
@@ -465,14 +468,15 @@ class ClassifiersTestSets(ClassifierTestSetRelatedResource):
             required=True,
             location="json",
         )
-
+    @swag_from('./docs/Classifiers/get_test_set.yml')
     def get(self, classifier_id: int) -> T.List[ClassifierTestSetStatusJson]:
         clsf = get_object_or_404(
             models.Classifier, models.Classifier.classifier_id == classifier_id
         )
 
         return [self._test_set_status(test_set) for test_set in clsf.test_sets]
-
+    
+    @swag_from('./docs/Classifiers/post_test_set.yml')
     def post(self, classifier_id: int) -> ClassifierTestSetStatusJson:
         args = self.reqparse.parse_args()
         test_set_name: str = args["test_set_name"]
@@ -513,7 +517,8 @@ class ClassifiersTestSetsPredictions(
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         SupportSpreadsheetFileType.__init__(self)
-
+    
+    @swag_from('./docs/Classifiers/test_prediction.yml')
     def get(self, classifier_id: int, test_set_id: int) -> Response:
         test_set = get_object_or_404(models.TestSet, models.TestSet.id_ == test_set_id)
         if test_set.classifier.classifier_id != classifier_id:
@@ -557,6 +562,7 @@ class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):
             name="file", type=FileStorage, required=True, location="files"
         )
 
+    @swag_from('./docs/Classifiers/test_file.yml')
     def post(self, classifier_id: int, test_set_id: int) -> ClassifierTestSetStatusJson:
         """Upload a training set for classifier, and start training.
 
@@ -742,7 +748,8 @@ class TopicModelRelatedResource(BaseResource):
 class OneTopicModel(TopicModelRelatedResource):
 
     url = "/topic_models/<int:topic_model_id>"
-
+    
+    @swag_from('./docs/topic_models/get_single_topic.yml')
     def get(self, topic_model_id: int) -> TopicModelStatusJson:
         topic_mdl = get_object_or_404(
             models.TopicModel, models.TopicModel.id_ == topic_model_id
@@ -834,6 +841,7 @@ class TopicModels(TopicModelRelatedResource):
             help="Do we need to do lemmatize(english only)?",
         )
 
+    @swag_from('./docs/topic_models/post.yml')
     def post(self) -> TopicModelStatusJson:
         """Create a classifier."""
         args = self.reqparse.parse_args()
@@ -858,7 +866,8 @@ class TopicModels(TopicModelRelatedResource):
         topic_mdl.save()
         utils.Files.topic_model_dir(id_=topic_mdl.id_, ensure_exists=True)
         return self._topic_model_status_json(topic_mdl)
-
+    
+    @swag_from('./docs/topic_models/get.yml')
     def get(self) -> T.List[TopicModelStatusJson]:
         res = [
             self._topic_model_status_json(topic_mdl)
@@ -877,6 +886,8 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
         self.reqparse.add_argument(
             name="file", type=FileStorage, required=True, location="files"
         )
+    
+    @swag_from('./docs/topic_models/post_training.yml')
     def post(self, id_: int) -> dict:
         args = self.reqparse.parse_args()
         file_: FileStorage = args["file"]
@@ -965,7 +976,8 @@ class TopicModelsTopicsNames(TopicModelRelatedResource):
             location="json",
             help="",
         )
-
+    
+    @swag_from('./docs/topic_models/topic_names.yml')
     def post(self, id_: int) -> TopicModelStatusJson:
         args = self.reqparse.parse_args()
         topic_names: T.List[str] = args["topic_names"]
@@ -985,7 +997,8 @@ class TopicModelsTopicsNames(TopicModelRelatedResource):
 class TopicModelsTopicsPreview(TopicModelRelatedResource):
 
     url = "/topic_models/<int:topic_model_id>/topics/preview"
-
+    
+    @swag_from('./docs/topic_models/topics_preview.yml')
     def get(self, topic_model_id: int) -> TopicModelPreviewJson:
         topic_mdl = get_object_or_404(
             models.TopicModel, models.TopicModel.id_ == topic_model_id
@@ -1081,7 +1094,8 @@ class TopicModelsKeywords(TopicModelRelatedResource, SupportSpreadsheetFileType)
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         SupportSpreadsheetFileType.__init__(self)
-
+    
+    @swag_from('./docs/topic_models/keywords.yml')
     def get(self, topic_model_id: int) -> Response:
         topic_mdl = get_object_or_404(
             models.TopicModel, models.TopicModel.id_ == topic_model_id
@@ -1139,6 +1153,7 @@ class TopicModelsTopicsByDoc(TopicModelRelatedResource, SupportSpreadsheetFileTy
         self.reqparse = reqparse.RequestParser()
         SupportSpreadsheetFileType.__init__(self)
 
+    @swag_from('./docs/topic_models/topics_by_doc.yml')
     def get(self, topic_model_id: int) -> Response:
         topic_mdl = get_object_or_404(
             models.TopicModel, models.TopicModel.id_ == topic_model_id
@@ -1233,6 +1248,27 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
     # Usually, we'd read this from app.config, but we need it to create app.config ...
     app = Flask(__name__)
     CORS(app)
+
+    # Create an APISpec
+    template = {
+        "swagger": "2.0",
+        "info": {
+            "title": "OpenFraming API documentation",
+            "description": "A minimal UI for checking out API documentation",
+            "version": "0.1.1",
+            "contact": {
+            "name": "Derry Wijaya, Lei Guo",
+            "url": "help.openframing@gmail.com",
+            }
+        },
+    }
+    app.config['SWAGGER'] = {
+        'title': 'OpenFraming API',
+        'uiversion': 3,
+        'specs_route': '/docs/',
+        'doc_dir': '/docs/'
+    }
+    swagger = Swagger(app, template=template)
     
     gunicorn_logger = logging.getLogger('gunicorn.access')
     # app.logger.removeHandler(default_handler)

@@ -14,7 +14,7 @@ data = {
     "name": "sample classifier", "notify_at_email": "vibs97@bu.edu",
     "category_names": category_names
     }
-res = requests.post('http://0.0.0.0:5000/api/classifiers/', json=data)
+res = requests.post('http://www.openframing.org:5000/api/classifiers/', json=data)
 print(res.text)
 """
 
@@ -25,13 +25,12 @@ print(res.text)
 """
 
 # /api/classifiers/1/training/file post
-
+"""
 fil = open('testing_files/train_classifier.csv', 'r')
 data = {"file": fil}
 res = requests.post('http://0.0.0.0:5000/api/classifiers/110/training/file', files=data)
 print(res.text)
-
-
+"""
 # /api/classifiers/1/test_sets post
 """
 data = {
