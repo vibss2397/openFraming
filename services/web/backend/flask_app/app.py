@@ -15,9 +15,11 @@ from flask import Flask
 from flask import has_app_context
 from flask import Response
 from flask import send_file
+from flask.logging import default_handler
 from flask_restful import Api  # type: ignore
 from flask_restful import reqparse
 from flask_restful import Resource
+from flask import current_app as app
 from playhouse.flask_utils import get_object_or_404
 from sklearn import model_selection  # type: ignore
 from typing_extensions import TypedDict
@@ -40,7 +42,6 @@ from flask_cors import CORS
 API_URL_PREFIX = "/api"
 
 logger = logging.getLogger(__name__)
-
 
 class HasReqParseProtocol(TT.Protocol):
     reqparse: reqparse.RequestParser
@@ -67,7 +68,6 @@ class SupportSpreadsheetFileType(object):
 
         if file_type == file_path.suffix:
             return file_path
-            print('here')
         elif file_type in Settings.SUPPORTED_NON_CSV_FORMATS:
             file_path_with_type = file_path.parent / (file_path.stem + file_type)
             with file_path.open() as f:
@@ -78,7 +78,6 @@ class SupportSpreadsheetFileType(object):
             excel_writer = pd.ExcelWriter(file_path_with_type)
             df.to_excel(excel_writer, index=False, header=False)
             excel_writer.save()
-            print('here2')
             return file_path_with_type
         else:
             raise RuntimeError("Unknown/malformed file type passed: " + file_type)
@@ -206,9 +205,10 @@ class OneClassifier(ClassifierRelatedResource):
         )
         return self._classifier_status(clsf)
 
-
+# @app.route('/something')
 class Something(Resource):
     def get(self):
+        logger.info('I have arrived here')
         return {'hello': 'world', 'a': Settings.SERVER_NAME}
 
 
@@ -294,9 +294,11 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
                 models.Classifier.classifier_id == classifier_id
             )
         except models.Classifier.DoesNotExist:
+            logger.info('Classifier with id' + str(classifier_id) + 'not found')
             raise NotFound("classifier not found.")
 
         if classifier.train_set is not None:
+            logger.info("This classifier already has a training set.")
             raise AlreadyExists("This classifier already has a training set.")
 
         table_headers, table_data = self._validate_training_file_and_get_data(
@@ -1231,8 +1233,13 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
     # Usually, we'd read this from app.config, but we need it to create app.config ...
     app = Flask(__name__)
     CORS(app)
+    
+    # gunicorn_logger = logging.getLogger('gunicorn.access')
+    # # app.logger.removeHandler(default_handler)
+    # app.logger.handlers.extend(gunicorn_logger.handlers)
+    # app.logger.setLevel(gunicorn_logger.level)
 
-    # app.config["SERVER_NAME"] = Settings.SERVER_NAME
+    app.config["SERVER_NAME"] = Settings.SERVER_NAME
     # app.config["SERVER_NAME"] = "0.0.0.0:5000"
     # Create project root if necessary
     if not Settings.PROJECT_DATA_DIRECTORY.exists():
@@ -1241,7 +1248,6 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
         utils.Files.unsupervised_dir(ensure_exists=True)
 
     Version.ensure_project_data_dir_version_safe()
-
     # Create database tables if the SQLITE file is going to be new
     if not Settings.DATABASE_FILE.exists():
         database = pw.SqliteDatabase(str(Settings.DATABASE_FILE))
