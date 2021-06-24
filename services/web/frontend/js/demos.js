@@ -1,6 +1,8 @@
 /* * * * */
 /*  DATA */
 /* * * * */
+const urlParams = new URLSearchParams(window.location.search);
+
 let GUN_DATA;
 let COV_US;
 let COV_KO;
@@ -607,9 +609,9 @@ function check_clicked(val){
 /* * * * * * */
 $(document).ready(function() {
 
-    // $("#step4")
+    const demo = urlParams.get('demo');
 
-    d3.csv("datasets/german_gunviolence_data.csv",function(d) {
+    d3.csv("datasets/gunviolence_data.csv",function(d) {
         return {
             date : parse3(d.date),
             name : d.name,
@@ -647,5 +649,9 @@ $(document).ready(function() {
         COV_KO=data;
         show_covid('ko');
     });
+
+    if (demo !== null) {
+        $(`#${demo}`).click();
+    }
 
 });

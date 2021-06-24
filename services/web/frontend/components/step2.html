@@ -20,7 +20,6 @@
 
   <!-- LOCAL FILES -->
   <script type="module" src="js/client.js"></script>
-  <script type="module" src="js/step2.js"></script>
 
 
   <title>Open Framing</title>
@@ -39,51 +38,10 @@
             interest (deductive), and then decide a list of frames to be analyzed. You may include both "generic frames"
             such as <i>human interest, conflict, attribution of responsibility, and economic consequences</i>, which can be
             applied to the analysis of a variety of issues, and "issue-specific frames," which are often used to discuss
-            a particular issue. See our demo for more information about how to decide frames to be analyzed.
+            a particular issue.<br><br>
+            <a href="demos.html?demo=gunv-tab">See our demo</a> for more information about how to decide frames to be analyzed.
           </p>
           <img src="images/step2.png" alt="Step 2 Flowchart" style="width: 100%">
-
-          <hr>
-          <div class="spacer"></div>
-
-<!--    ENTER ID      -->
-          <p>If you have already trained a topic model on our system and would like to see the results of training,
-            please see the email sent from OpenFraming containing your topic model ID and either enter it below or
-            click the link found in the email.
-          </p>
-          <div class="row">
-            <label style="margin-right: 10px;">ID: </label>
-            <input type="text" id="tmp-id" name="tmp-id" value=""><br>
-          </div>
-          <div class="row">
-            <a id="submit2" style="width: 20%; color: white; margin-left: 30px;" class="btn btn-theme mt-2 btn-block">Submit</a>
-          </div>
-
-          <br>
-          <div id="error2" class="hidden card card-main" style="background: #ffe3e3">
-            <div class="card-body">
-              <p id="error2-text"  class="new-user"><b>Error panel 2</b></p>
-            </div>
-          </div>
-
-
-<!--    PREVIEW SECTION      -->
-
-          <div id="preview-info" class="hidden">
-            <h4><strong>See a preview for your topic model below:</strong></h4>
-            <div class="row">
-              <div class="col-sm"><b>Topic model name</b></div>
-              <div class="col-sm" id="tm-prev-name"></div>
-            </div>
-            <div class="row">
-              <div class="col-sm"><b>Number of topics</b></div>
-              <div class="col-sm" id="tm-prev-num"></div>
-            </div>
-            <h4>Topic previews:</h4>
-            <!-- Section gets added to dynamically -->
-            <div id="previews"></div>
-          </div>
-
         </div>
       </div>
     </div>

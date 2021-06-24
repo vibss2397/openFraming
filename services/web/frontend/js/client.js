@@ -72,3 +72,8 @@ function changeTabs(step) {
     $(`#step1`).removeClass('active').removeClass('show');
     $(`#step${step}`).addClass('active').addClass('show');
 }
+
+function showHelp(id) {
+    let helpId = id+'-help';
+    $(`#${helpId}`).toggle();
+}

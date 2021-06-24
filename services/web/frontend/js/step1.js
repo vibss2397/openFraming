@@ -123,12 +123,3 @@ $(document).ready(function() {
 
 
 
-
-/* * * * * * * */
-/*  HELPERS    */
-/* * * * * * * */
-
-function showHelp(id) {
-    let helpId = id+'-help';
-    $(`#${helpId}`).toggle();
-}
