@@ -1,8 +1,6 @@
 /* * * * */
 /*  DATA */
 /* * * * */
-const urlParams = new URLSearchParams(window.location.search);
-
 let GUN_DATA;
 let COV_US;
 let COV_KO;
@@ -57,7 +55,7 @@ function get_keyframes(datevalues, names){
             ]);
         }
     }
-    console.log(b);
+    // console.log(b);
     keyframes.push([new Date(kb), rank(names,(name) => {
         return b.get(name) || 0;
     })]);
@@ -234,7 +232,7 @@ function plot_chart(arg){
     }
     let names = new Set(data.map(d => d.name));
     let dat = get_datevalue(data);
-    console.log(dat);
+    // console.log(dat);
     let keyframes = get_keyframes(dat,  names);
     let nameframes = d3.groups(keyframes.flatMap(([, data]) => data), d => d.name);
     let prev = new Map(nameframes.flatMap(([, data]) => d3.pairs(data, (a, b) => [b, a])));
@@ -269,7 +267,19 @@ var radius = null;
 var svg = null;
 var svg_bar = null;
 var color_pie = null;
-var data_processing = null
+var data_processing = null;
+var Gun_Names = null;
+
+function completeObject(x, separate_categories){
+    for(let [key, _] in Object.entries(x)){
+        separate_categories.forEach((category) => {
+            if(!(category in  x[key])){
+                x[key][category] = 0;
+            }
+        })
+    }
+    return x;
+}
 
 function process_data(data, data_processing){
     let count_category = []
@@ -328,7 +338,22 @@ function process_data(data, data_processing){
     if(count_category.length==0){
         count_category = data
     }
+
+    let data_names_with_leaning = count_category
+        .map(x=>[x.name, x.leaning])
+        .reduce((r, [v, k]) => {
+            if(!r[v]) r[v] = {};
+            r[v][k] = ++r[v][k] || 1;
+            return r;
+        }, {});
+    let data_names_with_leaning_modified = {}
+    for(const [key, val] of Object.entries(data_names_with_leaning)){
+        const temp = Object.keys(val).reduce((a, b) => obj[a] > obj[b] ? a : b);
+        data_names_with_leaning_modified[key] = temp;
+    }
+
     let categories_count = count_category.map(x=>x.category).reduce(function(countMap, word) {countMap[word] = ++countMap[word] || 1;return countMap}, {})
+    let separate_categories = Object.keys(categories_count);
     let categories_month = count_category
         .map(x=>[x.date.getMonth(), x.category])
         .reduce((r, [v, k]) => {
@@ -336,7 +361,8 @@ function process_data(data, data_processing){
             r[v][k] = ++r[v][k] || 1;
             return r;
         }, {})
-    return [categories_count, categories_month];
+    let some  = completeObject(categories_month, separate_categories);
+    return [categories_count, some, data_names_with_leaning_modified];
 }
 
 
@@ -357,7 +383,6 @@ function update(data, color) {
         // names must be equal
         return 0;
     })
-    // console.log('heree', data_ready);
     // map to data
     // var u = svg.selectAll("path")
     //   .data(data_ready)
@@ -404,16 +429,17 @@ function update(data, color) {
             var interpolate = d3.interpolate(this._current, d);
             this._current = interpolate(0);
             return function(t) {
-                var d2 = interpolate(t);
+                var d2 = interpolate(t*100);
                 var pos = outerArc.centroid(d2);
                 pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+                // pos[0] = radius * 0.75 * (midAngle(d2) < Math.PI ? 1 : -1);
                 return [arc.centroid(d2), outerArc.centroid(d2), pos];
             };
         });
 
 
     function midAngle(d){
-        return d.startAngle + (d.endAngle - d.startAngle)/2;
+        return d.startAngle + (d.endAngle - d.startAngle)/3;
     }
 
     svg
@@ -422,7 +448,6 @@ function update(data, color) {
         .enter()
         .insert('text')
         .text( function(d) { return (d.data.key + ' (' + (d.data.value/total_temp*100).toFixed(2)+ '%)') } )
-        .style("font-size", 10.5)
         .transition().duration(1000)
         .attrTween("transform", function(d) {
             this._current = this._current || d;
@@ -431,10 +456,11 @@ function update(data, color) {
             return function(t) {
                 var d2 = interpolate(t);
                 var pos = outerArc.centroid(d2);
-                pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+                pos[0] = radius * 0.8 * (midAngle(d2) < Math.PI ? 1 : -1);
                 return "translate("+ pos +")";
             };
         })
+        .style("font-size", "10")
         .styleTween("text-anchor", function(d){
             this._current = this._current || d;
             var interpolate = d3.interpolate(this._current, d);
@@ -454,7 +480,6 @@ function create_bar(data2, color_bar){
         .attr("height", bar_height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
     let data = []
     let max_val = -1
     let color_codes = []
@@ -466,8 +491,9 @@ function create_bar(data2, color_bar){
         temp['month'] = i;
         let temp_val = 0;
         for(let entry of Object.keys(data2[0]).sort()){
-            temp[entry] = entries[i][1][entry];
-            temp_val += entries[i][1][entry];
+            let entry_temp = entry in entries[i][1] ? entries[i][1][entry]:0 ;
+            temp[entry] = entry_temp;
+            temp_val += entry_temp;
             if(flag==0) color_codes.push(color_bar(entry));
         }
         flag = 1;
@@ -483,7 +509,6 @@ function create_bar(data2, color_bar){
         .domain(groups)
         .range([0, bar_width])
         .padding([0.2])
-
     svg_bar.append("g")
         .attr("transform", "translate(0," + bar_height + ")")
         .call(d3.axisBottom(x).tickSizeOuter(0));
@@ -491,7 +516,6 @@ function create_bar(data2, color_bar){
     var y = d3.scaleLinear()
         .domain([0, max_val])
         .range([ bar_height, 0 ]);
-
     svg_bar.append("g")
         .call(d3.axisLeft(y));
 
@@ -499,7 +523,6 @@ function create_bar(data2, color_bar){
     var stackedData = d3.stack()
         .keys(subgroups)
         (data);
-    // console.log(stackedData);
 
     svg_bar.append("g")
         .selectAll("g")
@@ -517,13 +540,11 @@ function create_bar(data2, color_bar){
         .attr("y", function(d) { return y(d[1]); })
         .attr("height", function(d) { return y(d[0]) - y(d[1]); })
         .attr("width",x.bandwidth());
-
     var legend = svg_bar.selectAll(".legend")
         .data(color_codes)
         .enter().append("g")
         .attr("class", "legend")
         .attr("transform", function(d, i) { return "translate(150," + i * 19 + ")"; });
-
     legend.append("text")
         .attr("x", bar_width -240)
         .attr("y", 9)
@@ -540,23 +561,33 @@ function create_bar(data2, color_bar){
         .style("fill", function(d, i) {return color_codes.slice().reverse()[i];})
         .style("opacity", 0.7);
 
-
 }
-
-function add_names_to_div(){
-    let names = ['Daily Caller', 'Daily KOS', 'New York Times', 'CNN', 'Washington Post', 'USA Today', 'Breitbart',
-                'ABC News', 'The Hill', 'Chicago Tribune', 'News Week', 'LA Times', 'Fox News', 'NPR', 'Huffington Post',
-                'Newsmax', 'NBC News', 'PBS', 'Slate', 'MSNBC', 'CBS News', 'The Blaze', 'Wall Street Journal', 'Politico',
-                'Mother Jones', 'The Atlantic', 'Vox', 'Yahoo', 'Buzzfeed'];
-    for(let name of names){
+function get_badge_from_leaning(leaning){
+    if(leaning==='left'){
+        return '<span class="badge bg-primary" style="color:#fff;">Liberal</span>'
+    }else if(leaning==='neutral'){
+        return '<span class="badge bg-success" style="color:#fff;">Mainstream</span>'
+    }else{
+        return '<span class="badge bg-danger" style="color:#fff;">Conservative</span>'
+    }
+}
+function add_names_to_div(some){
+    // let names = ['Daily Caller', 'Daily KOS', 'New York Times', 'CNN', 'Washington Post', 'USA Today', 'Breitbart',
+    //             'ABC News', 'The Hill', 'Chicago Tribune', 'News Week', 'LA Times', 'Fox News', 'NPR', 'Huffington Post',
+    //             'Newsmax', 'NBC News', 'PBS', 'Slate', 'MSNBC', 'CBS News', 'The Blaze', 'Wall Street Journal', 'Politico',
+    //             'Mother Jones', 'The Atlantic', 'Vox', 'Yahoo', 'Buzzfeed'];
+    $('#news-list').html('');
+    for(const [key, value] of Object.entries(some)){
         $('#news-list').append(
-            "<li class='list-group-item'>"+name+"</li>"
+            "<li class='list-group-item position-relative'><h6>"+
+            get_badge_from_leaning(value.toLowerCase())+" "+ key+"<h6></li>"
         )
     }
 }
 
 function plot_pie_chart(data_processing){
     var some = process_data(GUN_DATA, data_processing);
+    console.log(some);
     if(color_pie==null){
         color_pie = d3.scaleOrdinal()
             .domain(Object.keys(some))
@@ -564,6 +595,7 @@ function plot_pie_chart(data_processing){
     }
     update(some[0], color_pie)
     create_bar(some[1], color_pie);
+    add_names_to_div(some[2]);
 }
 
 function show_gunviolence(val='all'){
@@ -571,22 +603,23 @@ function show_gunviolence(val='all'){
     data_processing = []
     $('.bar-graph').html('By Month <br>')
 
-    pie_width = 800,
-        pie_height = 800,
-        pie_margin = 170;
+    pie_width = 700,
+        pie_height = 660,
+        pie_margin = 110;
 
-    margin = {top: 10, right: 200, bottom: 20, left: 50},
+    margin = {top: 10, right: 25, bottom: 20, left: 60},
         bar_width = 550,
         bar_height = 500;
 
     radius = Math.min(pie_width, pie_height) / 2 - pie_margin
+    // radius = Math.min(pie_width, pie_height) / 2 - pie_margin
     pie = d3.pie()
         .value(function(d) {return d.value; })
         .sort(function(a, b) {return d3.ascending(a.key, b.key);} ) // This make sure that group order remains the same in the pie chart
     svg = d3.select("#gunv-chart")
         .append("svg")
-        .attr("width", pie_width)
-        .attr("height", 600)
+        .attr("width", pie_width+50)
+        .attr("height", 500)
         .append("g")
         .attr("transform", "translate(" + pie_width / 2 + "," + pie_height / 3 + ")");
 
@@ -609,7 +642,7 @@ function check_clicked(val){
 /* * * * * * */
 $(document).ready(function() {
 
-    const demo = urlParams.get('demo');
+    // $("#step4")
 
     d3.csv("datasets/gunviolence_data.csv",function(d) {
         return {
@@ -620,8 +653,7 @@ $(document).ready(function() {
             category : d.category,
         };
     }).then(function(data) {
-        gun_names = new Set(data.map(d => d.name));
-        add_names_to_div();
+        Gun_Names = new Set(data.map(d => d.name));
         GUN_DATA=data;
         show_gunviolence();
     });
@@ -649,9 +681,5 @@ $(document).ready(function() {
         COV_KO=data;
         show_covid('ko');
     });
-
-    if (demo !== null) {
-        $(`#${demo}`).click();
-    }
 
 });

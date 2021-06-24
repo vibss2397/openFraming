@@ -245,12 +245,27 @@ h5 {
   padding: 0 200px 0 200px;
 }
 
-#gunv-head-section.main-content {
-  padding: 50px 200px 0 200px;
+#filters .badge {
+  margin-top: 1.3%;
+  margin-left: 1%;
+}
+
+#filters .col {
+  margin-left: 15%;
+  font-size: 1rem;
 }
 
 #gun-violence .main-content {
   margin-bottom: 0;
+}
+
+#gun-violence ul {
+  margin: 0;
+  padding: 0;
+}
+
+#gunv-head-section.main-content {
+  padding: 50px 200px 0 200px;
 }
 
 #gunv-prep-section h5 {

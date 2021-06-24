@@ -60,25 +60,26 @@
                 <li class="nav-item" role="presentation">
                     <a id="cov-us-tab" class="nav-link" href="#covid-us" aria-controls="covid-us" role="tab" data-toggle="tab">Covid-19</a>
                 </li>
-<!--                <li class="nav-item" role="presentation">-->
-<!--                    <a id="cov-ko-tab" class="nav-link" href="#covid-ko" aria-controls="covid-ko" role="tab" data-toggle="tab">Covid-19 Korea</a>-->
-<!--                </li>-->
             </ul>
             <div class="tab-content" id="demo-tab-content">
 <!--  COVID-19 US TAB  -->
-                <div style="margin: 5%;" class="tab-pane fade" id="covid-us" role="tabpanel" aria-labelledby="covid-us-tab">
-                    <h3>Framing of Covid-19 in U.S. news media over time </h3>
+                <div style="margin: 5%;" class="tab-pane fade step-p-general" id="covid-us" role="tabpanel" aria-labelledby="covid-us-tab">
+                    <h4><strong>Case Study 2:<br>International news coverage of the Covid-19 pandemic</strong></h4>
+                    <br>
+                    <p>
+                        In addition to framing analysis, you can also use OFAI to conduct LDA topic modeling analysis to
+                        understand major topics in text documents.  Here is a demonstration of how we analyzed the topics
+                        of the U.S. and South Korean news coverage of the Covid-19 pandemic between Janurary 2020 and
+                        March 2021.  More information about this project can be found: https://covid19.philemerge.com/
+                    </p>
+                    <br>
+                    <h4 style="text-align: left !important;">Framing of Covid-19 in U.S. news media over time </h4>
                     <div id="cov-us-chart" class="chart"></div>
                     <hr>
                     <div class="spacer-m"></div>
-                    <h3>Framing of Covid-19 in South Korean news media over time </h3>
+                    <h4 style="text-align: left !important;">Framing of Covid-19 in South Korean news media over time </h4>
                     <div id="cov-ko-chart" class="chart"></div>
                 </div>
-                <!--  COVID-19 KO TAB  -->
-<!--                <div style="margin: 5%;" class="tab-pane fade" id="covid-ko" role="tabpanel" aria-labelledby="covid-ko-tab">-->
-<!--                    <h2>Framing of Covid-19 in South Korean news media over time </h2>-->
-<!--                    <div id="cov-ko-chart" class="chart"></div>-->
-<!--                </div>-->
 <!--  GUN VIOLENCE TAB  -->
                 <div style="margin: 5%;" class="tab-pane fade show active" id="gun-violence" role="tabpanel" aria-labelledby="gun-violence-tab">
 
@@ -234,8 +235,65 @@
                             </p>
 
                         </div>
-                    </div>
+                        <div class="spacer-m"></div>
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="card pull-right" style="width: 18rem;">
+                                    <div class="card-header">News Sites</div>
+                                    <ul id="news-list" class="list-group list-group-flush"></ul>
+                                </div>
+                            </div>
+                            <div class="col">
+<!--                                <div id="blah" class="main-content">-->
+                                <div class="container">
+                                    <h5><strong>Filter by:</strong></h5>
+                                    <br>
+                                    <div id="filters" class="row">
+                                        <div class="col">
+                                            <h6>Political Leaning:</h6>
+                                            <input id="left" type="checkbox" value="left" onclick="check_clicked('left')">
+                                            <label for="left">
+                                                <span>Liberal</span>
+                                                <span class="position-absolute badge bg-primary top-0 start-100 translate-middle p-2 rounded-circle">
+                                            </span>
+                                            </label><br>
 
+                                            <input id="right" type="checkbox" value="right" onclick="check_clicked('right')">
+                                            <label for="right">
+                                                <span>Conservative</span>
+                                                <span class="position-absolute badge bg-danger top-0 start-100 translate-middle p-2 rounded-circle">
+                                            </span>
+                                            </label><br>
+
+                                            <input id="neutral" type="checkbox" value="neutral" onclick="check_clicked('neutral')">
+                                            <label for="neutral">
+                                                <span>Mainstream</span>
+                                                <span class="position-absolute badge bg-success top-0 start-100 translate-middle p-2 rounded-circle">
+                                            </span>
+                                            </label><br>
+                                        </div>
+                                        <div class="col">
+                                            <h6>Year:</h6>
+                                            &emsp;&nbsp;<input id="2016" class="form-check-input 2016 year-check" type="checkbox" value="2016" onclick="check_clicked('2016')">
+                                            <label for="2016" class="form-check-label">2016</label><br>
+
+                                            &emsp;&nbsp;<input id="2017" class="form-check-input 2017 year-check" type="checkbox" value="2017" onclick="check_clicked('2017')">
+                                            <label for="2017" class="form-check-label">2017</label><br>
+
+                                            &emsp;&nbsp;<input id="2018" class="form-check-input 2018 year-check" type="checkbox" value="2018" onclick="check_clicked('2018')">
+                                            <label for="2018" class="form-check-label">2018</label>
+                                        </div>
+                                    </div>
+<!--                                    </div>-->
+                                </div>
+                                <br>
+                                <div style="padding: 0; width: 50%;" id="gunv-bars" class="bar-graph"></div>
+                                <br><br>
+                                <div style="padding: 0; width: 50%;" id="gunv-chart" class="chart"></div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
             <div class="card-footer text-right"></div>
