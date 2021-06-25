@@ -233,27 +233,30 @@ class Classifiers(ClassifierRelatedResource):
             location="json",
             help="The email address provided must be a valid email address.",
         )
-        self.reqparse.add_argument(
-            name="category_names",
-            type=self._validate_serializable_list_value,
-            action="append",
-            required=True,
-            location="json",
-            help="The category names must be a list of strings that don't contain commas within them..",
-        )
+        # self.reqparse.add_argument(
+        #     name="category_names",
+        #     type=self._validate_serializable_list_value,
+        #     action="append",
+        #     required=False,
+        #     location="json",
+        #     help="The category names must be a list of strings that don't contain commas within them..",
+        # )
     
     @swag_from('./docs/Classifiers/post.yml')
     def post(self) -> ClassifierStatusJson:
         """Create a classifier."""
 
         args = self.reqparse.parse_args()
-        category_names = args["category_names"]
-        utils.Validate.no_duplicates(category_names)
-        utils.Validate.not_just_one(category_names)
+        # category_names = args["category_names"]
+        # utils.Validate.no_duplicates(category_names)
+        # utils.Validate.not_just_one(category_names)
         name = args["name"]
         notify_at_email = args["notify_at_email"]
+        # clsf = models.Classifier.create(
+        #     name=name, category_names=category_names, notify_at_email=notify_at_email
+        # )
         clsf = models.Classifier.create(
-            name=name, category_names=category_names, notify_at_email=notify_at_email
+            name=name, notify_at_email=notify_at_email
         )
         clsf.save()
         utils.Files.classifier_dir(classifier_id=clsf.classifier_id, ensure_exists=True)
@@ -277,6 +280,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         self.reqparse.add_argument(
             name="file", type=FileStorage, required=True, location="files"
         )
+
     @swag_from('./docs/Classifiers/post_training.yml')
     def post(self, classifier_id: int) -> ClassifierStatusJson:
         """Upload a training set for classifier, and start training.
@@ -304,23 +308,33 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
             app.logger.info("This classifier already has a training set.")
             raise AlreadyExists("This classifier already has a training set.")
 
+        """ Old version
         table_headers, table_data = self._validate_training_file_and_get_data(
-            classifier.category_names, file_
+             classifier.category_names, file_
+        )
+        """
+        
+        table_headers, table_data, unique_category_names = self._validate_training_file_and_get_data(
+            file_
         )
         file_.close()
+        """Old version
         # Split into train and dev
-        # ss = model_selection.StratifiedShuffleSplit(n_splits=1, test_size=0)
-        # X, y = zip(*table_data)
-        # train_indices, dev_indices = next(ss.split(X, y))
-
+        ss = model_selection.StratifiedShuffleSplit(n_splits=1, test_size=0)
+        X, y = zip(*table_data)
+        train_indices, dev_indices = next(ss.split(X, y))
+        """
         train_data = [table_data[i] for i in range(len(table_data))]
-        # dev_data = [table_data[i] for i in dev_indices]
+        """dev_data = [table_data[i] for i in dev_indices]"""
 
         train_file = utils.Files.classifier_train_set_file(classifier_id)
         self._write_headers_and_data_to_csv(table_headers, train_data, train_file)
-        # dev_file = utils.Files.classifier_dev_set_file(classifier_id)
-        # self._write_headers_and_data_to_csv(table_headers, dev_data, dev_file)
-
+        
+        """Old version
+        dev_file = utils.Files.classifier_dev_set_file(classifier_id)
+        self._write_headers_and_data_to_csv(table_headers, dev_data, dev_file)
+        """
+        classifier.category_names = unique_category_names
         classifier.train_set = models.LabeledSet()
         # classifier.dev_set = models.LabeledSet()
         classifier.train_set.save()
@@ -348,20 +362,27 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         )
 
         return self._classifier_status(classifier)
-
+    
+    """ Original implementation(now a relic.)
     @staticmethod
     def _validate_training_file_and_get_data(
         category_names: T.List[str], file_: FileStorage
     ) -> T.Tuple[T.List[str], T.List[T.List[str]]]:
+    """
+    @staticmethod
+    def _validate_training_file_and_get_data(
+        file_: FileStorage
+    ) -> T.Tuple[T.List[str], T.List[T.List[str]]]:
         """Validate user uploaded file and return uploaded validated data.
 
         Args:
-            category_names: The categories for the classifier.
+            category_names: The categories for the classifier. --X(not needed now).
             file_: uploaded file.
 
         Returns:
             table_headers: A list of length 2.
             table_data: A list of lists of length 2.
+            category_names: list of categories for the classifier.
         """
         # TODO: Write tests for all of these!
         
@@ -385,16 +406,16 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         category_names_counter = Counter(category for _, category in table_data)
 
         unique_category_names = category_names_counter.keys()
-        if set(category_names) != unique_category_names:
-            # TODO: Lower case category names before checking.
-            # TODO: More helpful error messages when there is an error with the
-            # the categories in an uploaded training file.
-            raise UnprocessableEntity(
-                "The categories for this classifier are"
-                f" {category_names}. But the uploaded file either"
-                " has some categories missing, or has categories in addition to the"
-                " ones indicated."
-            )
+        # if set(category_names) != unique_category_names:
+        #     # TODO: Lower case category names before checking.
+        #     # TODO: More helpful error messages when there is an error with the
+        #     # the categories in an uploaded training file.
+        #     raise UnprocessableEntity(
+        #         "The categories for this classifier are"
+        #         f" {category_names}. But the uploaded file either"
+        #         " has some categories missing, or has categories in addition to the"
+        #         " ones indicated."
+        #     )
 
         categories_with_less_than_two_exs = [
             category for category, count in category_names_counter.items() if count < 2
@@ -406,7 +427,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
                 " We need at least two examples per category."
             )
 
-        return table_headers, table_data
+        return table_headers, table_data, unique_category_names
 
 
 class ClassifierTestSetStatusJson(TypedDict):

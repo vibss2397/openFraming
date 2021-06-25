@@ -5,18 +5,17 @@ from numpy import fromfile
 
 """Classifier Part"""
 # /api/classifiers post
-"""
+
 category_names = ['Politics', '2nd Amendment rights', 'Gun control', 
     'Public opinion', 'Mental health', 'School or public space safety', 
     'Society', 'Race', 'Economic consequences']
 
 data = {
-    "name": "sample classifier", "notify_at_email": "vibs97@bu.edu",
-    "category_names": category_names
+    "name": "sample classifier", "notify_at_email": "vibs97@bu.edu"
     }
 res = requests.post('http://www.openframing.org:5000/api/classifiers/', json=data)
 print(res.text)
-"""
+
 
 # /api/classifiers/1 get
 """
