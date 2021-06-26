@@ -164,7 +164,7 @@ def do_topic_model_related_task(task_args: TopicModelTrainingTaskArgs,
             email_template_name="topic_model_training_finished",
             to_email=topic_mdl.notify_at_email,
             topic_model_name=topic_mdl.name,
-            topic_model_id=topic_model.id_,
+            topic_model_id=topic_mdl.id_,
             topic_model_preview_url=f"http://{Settings.SERVER_NAME}/topicModelPreviews.html?topic_model_id={topic_mdl.id_}",
             metrics=T.cast(T.Dict[str, T.Union[int, float]], metrics),
         )

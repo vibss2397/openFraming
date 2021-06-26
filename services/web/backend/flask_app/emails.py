@@ -98,16 +98,17 @@ _email_templates: TT.Final[T.Dict[str, EmailTemplate]] = {
             """<h2>OpenFraming</h2>
 <p>Hi there!</p>
 
-<p>The policy issue classifier you started training on openFraming.org has completed
-training. The name you gave to this policy issue classifier was: {classifier_name}. The id
-for this classifier is: {classifier_id}.</p>
+<p>The deep learning classifier you started training on openFraming.org has completed
+training. The name you gave to this classifier was: {classifier_name}. The id
+for this classifier is: <b>{classifier_id}</b>.</p>
 
 <p>Here are the metrics of the classifier we computed using a held out development set.<br>
 {metrics_html}
 </p>
 
-<p>You will get another email when we complete <i>inference/prediction</i> on the
-unlabelled dataset you uploaded.</p>
+<p>If you are satisfied with the performance of the frame classification model, 
+If you are satisfied with the performance of the frame classification model here:
+<a href="http://www.openframing.org/playground.html?step=5">openframing.org</a></p>
 
 <p>Cheers!</p>
 """
@@ -119,8 +120,8 @@ unlabelled dataset you uploaded.</p>
             """<h2>OpenFraming</h2>
 <p>Hi there!</p>
 
-<p>You requested to run inference on an unlabelled dataset with the following policy issue
-classifier: {classifier_name}.The id for this classifier is: {classifier_id}.
+<p>You requested to run predictions on an unlabelled dataset with the following
+classifier: {classifier_name}.The id for this classifier is: <b>{classifier_id}</b>.
 (Use this id if asked in the portal).</p>
 
 <p>Inference has completed! Please <a href={predictions_url}>click here</a> to download
@@ -285,7 +286,7 @@ class Emailer:
                 html_value = (
                     "<ul>\n"
                     + "\n".join(
-                        f"<li><b>{metric_name}</b>: {metric_value}</li>"
+                        f"<li><b>{metric_name}</b>: {round(metric_value, 2)}</li>"
                         for metric_name, metric_value in val.items()
                     )
                     + "\n</ul>"

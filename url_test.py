@@ -48,12 +48,12 @@ print(res.text)
 """
 
 # /api/classifiers/1/test_sets/1/file/ get
-
+"""
 fil = open('testing_files/test_classifier.csv', 'r')
 data = {"file": fil}
 res = requests.post('http://0.0.0.0:5000/api/classifiers/4/test_sets/3/file',files=data)
 print(res.text)
-
+"""
 
 # /api/classifiers/1/test_sets/1/predictions get
 """
@@ -68,9 +68,9 @@ data = {
     "topic_model_name": "all things must pass", "num_topics": 10, 
     "notify_at_email": "vibs97@bu.edu", "language": "english",
     "remove_stopwords": True, "remove_punctuation": True, 
-    "do_stemming": False, "do_lemmatizing": False
+    "do_stemming": True, "do_lemmatizing": True
     }
-res = requests.post('http://localhost:5000/api/topic_models/', json=data)
+res = requests.post('http://0.0.0.0:5000/api/topic_models/', json=data)
 print(res.text)
 """
 
@@ -81,20 +81,19 @@ print(res.text)
 """
 
 # api/topic_models/1/training/file/
-
 """
-fil = open('testing_files/dev.csv', 'r')
+fil = open('testing_files/step1.csv', 'r')
 data = {"file": fil} 
 # print(pd.read_csv(fil))
-res = requests.post('http://0.0.0.0:5000/api/topic_models/9/training/file', files=data)
+res = requests.post('http://0.0.0.0:5000/api/topic_models/4/training/file', files=data)
 print(res.text)
 """
 
 # api/topic_models/1/topics/preview get
-"""
-res = requests.get('http://0.0.0.0:5000/api/topic_models/1/topics/preview')
+
+res = requests.get('http://0.0.0.0:5000/api/topic_models/4/topics/preview')
 print(res.text)
-"""
+
 
 # api/topic_models/1/topics/keywords get
 # api/topic_models/1/topics_by_doc get
