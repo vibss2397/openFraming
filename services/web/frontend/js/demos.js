@@ -276,12 +276,12 @@ function completeObject(x, separate_categories){
             if(!(category in  x[key])){
                 x[key][category] = 0;
             }
-        })
+        })  
     }
     return x;
-}
-
-function process_data(data, data_processing){
+  }
+  
+  function process_data(data, data_processing){
     let count_category = []
     if(data_processing.indexOf('left')!=-1){
         temp = data.filter(x=>{
@@ -307,7 +307,7 @@ function process_data(data, data_processing){
         });
         count_category = count_category.concat(temp);
     }
-
+  
     if(data_processing.indexOf('2016')!=-1){
         temp = data.filter(x=>{
             if(x.date.getFullYear()==2016){
@@ -316,7 +316,7 @@ function process_data(data, data_processing){
         });
         count_category = count_category.concat(temp);
     }
-
+  
     if(data_processing.indexOf('2017')!=-1){
         temp = data.filter(x=>{
             if(x.date.getFullYear()==2017){
@@ -325,7 +325,7 @@ function process_data(data, data_processing){
         });
         count_category = count_category.concat(temp);
     }
-
+  
     if(data_processing.indexOf('2018')!=-1){
         temp = data.filter(x=>{
             if(x.date.getFullYear()==2018){
@@ -334,11 +334,11 @@ function process_data(data, data_processing){
         });
         count_category = count_category.concat(temp);
     }
-
+  
     if(count_category.length==0){
         count_category = data
     }
-
+  
     let data_names_with_leaning = count_category
         .map(x=>[x.name, x.leaning])
         .reduce((r, [v, k]) => {

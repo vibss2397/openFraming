@@ -98,15 +98,17 @@ _email_templates: TT.Final[T.Dict[str, EmailTemplate]] = {
             """<h2>OpenFraming</h2>
 <p>Hi there!</p>
 
-<p>The policy issue classifier you started training on openFraming.org has completed
-training. The name you gave to this policy issue classifier was: {classifier_name}.</p>
+<p>The deep learning classifier you started training on openFraming.org has completed
+training. The name you gave to this classifier was: {classifier_name}. The id
+for this classifier is: <b>{classifier_id}</b>.</p>
 
 <p>Here are the metrics of the classifier we computed using a held out development set.<br>
 {metrics_html}
 </p>
 
-<p>You will get another email when we complete <i>inference/prediction</i> on the
-unlabelled dataset you uploaded.</p>
+<p>If you are satisfied with the performance of the frame classification model, 
+If you are satisfied with the performance of the frame classification model here:
+<a href="http://www.openframing.org/playground.html?step=5">openframing.org</a></p>
 
 <p>Cheers!</p>
 """
@@ -118,8 +120,9 @@ unlabelled dataset you uploaded.</p>
             """<h2>OpenFraming</h2>
 <p>Hi there!</p>
 
-<p>You requested to run inference on an unlabelled dataset with the following policy issue
-classifier: {classifier_name}.</p>
+<p>You requested to run predictions on an unlabelled dataset with the following
+classifier: {classifier_name}.The id for this classifier is: <b>{classifier_id}</b>.
+(Use this id if asked in the portal).</p>
 
 <p>Inference has completed! Please <a href={predictions_url}>click here</a> to download
 your results.</p>
@@ -136,7 +139,8 @@ your results.</p>
 
 <p>You requested to run topic modeling with your chosen topic model name of:
 {topic_model_name}.</p>
-
+<p>The id for this topic_model is: <b>{topic_model_id}</b>.
+(Use this id if asked in the portal).</p>
 <p>Here are the metrics we computed on the same dataset that we trained the topic model 
 with:</p>
 {metrics_html}
@@ -226,6 +230,7 @@ class Emailer:
         to_email: str,
         *,
         classifier_name: str,
+        classifier_id: int,
         metrics: T.Dict[str, T.Union[float, int]],
     ) -> None:
         ...
@@ -237,6 +242,7 @@ class Emailer:
         to_email: str,
         *,
         classifier_name: str,
+        classifier_id: int,
         predictions_url: str,
     ) -> None:
         ...
@@ -248,6 +254,7 @@ class Emailer:
         to_email: str,
         *,
         topic_model_name: str,
+        topic_model_id: int,
         topic_model_preview_url: str,
         metrics: T.Dict[str, T.Union[float, int]],
     ) -> None:
@@ -261,7 +268,7 @@ class Emailer:
             "classifier_training_finished",
         ],
         to_email: str,
-        **template_values: T.Union[str, T.Dict[str, T.Union[float, int]]],
+        **template_values: T.Union[str, int, T.Dict[str, T.Union[float, int]]],
     ) -> None:
         template = _email_templates[email_template_name]
         template_values_html = {}
@@ -279,14 +286,14 @@ class Emailer:
                 html_value = (
                     "<ul>\n"
                     + "\n".join(
-                        f"<li><b>{metric_name}</b>: {metric_value}</li>"
+                        f"<li><b>{metric_name}</b>: {round(metric_value, 2)}</li>"
                         for metric_name, metric_value in val.items()
                     )
                     + "\n</ul>"
                 )
                 template_values_html["metrics_html"] = html_value
             else:
-                assert isinstance(val, str)
+                # assert isinstance(val, str)
                 template_values_html[key] = val
         html_content = template["html_content"].format(**template_values_html)
         message = Mail(
