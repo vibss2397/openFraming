@@ -5,7 +5,7 @@ from numpy import fromfile
 
 """Classifier Part"""
 # /api/classifiers post
-
+"""
 category_names = ['Politics', '2nd Amendment rights', 'Gun control', 
     'Public opinion', 'Mental health', 'School or public space safety', 
     'Society', 'Race', 'Economic consequences']
@@ -13,29 +13,31 @@ category_names = ['Politics', '2nd Amendment rights', 'Gun control',
 data = {
     "name": "sample classifier", "notify_at_email": "vibs97@bu.edu"
     }
-res = requests.post('http://www.openframing.org:5000/api/classifiers/', json=data)
+res = requests.post('http://0.0.0.0:5000/api/classifiers/', json=data)
 print(res.text)
-
+"""
 
 # /api/classifiers/1 get
 """
-res = requests.get('http://localhost:5000/api/classifiers/1')
+res = requests.get('http://0.0.0.0:5000/api/classifiers/4')
 print(res.text)
 """
 
 # /api/classifiers/1/training/file post
+
 """
 fil = open('testing_files/train_classifier.csv', 'r')
 data = {"file": fil}
-res = requests.post('http://0.0.0.0:5000/api/classifiers/110/training/file', files=data)
+res = requests.post('http://0.0.0.0:5000/api/classifiers/4/training/file', files=data)
 print(res.text)
 """
+
 # /api/classifiers/1/test_sets post
 """
 data = {
-    "test_set_name": "sample classifier_training_Set2", "notify_at_email": "vibs97@bu.edu"
+    "test_set_name": "sample classifier_prediction_set1", "notify_at_email": "vibs97@bu.edu"
 }
-res = requests.post('http://0.0.0.0:5000/api/classifiers/1/test_sets/', json=data)
+res = requests.post('http://0.0.0.0:5000/api/classifiers/4/test_sets/', json=data)
 print(res.text)
 """
 
@@ -46,12 +48,12 @@ print(res.text)
 """
 
 # /api/classifiers/1/test_sets/1/file/ get
-"""
+
 fil = open('testing_files/test_classifier.csv', 'r')
 data = {"file": fil}
-res = requests.post('http://0.0.0.0:5000/api/classifiers/1/test_sets/2/file',files=data)
+res = requests.post('http://0.0.0.0:5000/api/classifiers/4/test_sets/3/file',files=data)
 print(res.text)
-"""
+
 
 # /api/classifiers/1/test_sets/1/predictions get
 """

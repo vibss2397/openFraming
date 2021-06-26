@@ -6,10 +6,10 @@ from redis import Redis
 from rq import Queue  # type: ignore
 
 from flask_app.settings import Settings
-
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+from flask import current_app as app
+# logging.basicConfig()
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
 
 
 class ClassifierPredictionTaskArgs(TT.TypedDict):
@@ -74,8 +74,8 @@ class QueueManager(object):
         output_dir: str,
         num_train_epochs: float = 3.0,
     ) -> None:
-        logger.info("Enqueued classifier training")
-
+        app.logger.info("Enqueued classifier training")
+        app.logger.info('hererer')
         self.classifiers_queue.enqueue(
             "flask_app.modeling.tasks.do_classifier_related_task",
             ClassifierTrainingTaskArgs(
@@ -102,7 +102,7 @@ class QueueManager(object):
         test_output_file: str,
     ) -> None:
 
-        logger.info("Enqueued classifier training.")
+        app.logger.info("Enqueued classifier training.")
         self.classifiers_queue.enqueue(
             "flask_app.modeling.tasks.do_classifier_related_task",
             ClassifierPredictionTaskArgs(
@@ -133,7 +133,7 @@ class QueueManager(object):
         do_lemmatizing: bool,
         iterations: int = 1000
     ) -> None:
-        logger.info("Enqueued lda training with pickle_data.")
+        app.logger.info("Enqueued lda training with pickle_data.")
 
         self.topic_models_queue.enqueue(
             "flask_app.modeling.tasks.do_topic_model_related_task",

@@ -206,7 +206,6 @@ class OneClassifier(ClassifierRelatedResource):
         )
         return self._classifier_status(clsf)
 
-# @app.route('/something')
 class Something(Resource):
     def get(self):
         app.logger.info('I have arrived here')
@@ -233,21 +232,20 @@ class Classifiers(ClassifierRelatedResource):
             location="json",
             help="The email address provided must be a valid email address.",
         )
-        # self.reqparse.add_argument(
-        #     name="category_names",
-        #     type=self._validate_serializable_list_value,
-        #     action="append",
-        #     required=False,
-        #     location="json",
-        #     help="The category names must be a list of strings that don't contain commas within them..",
-        # )
+        self.reqparse.add_argument(
+            name="category_names",
+            type=self._validate_serializable_list_value,
+            action="append",
+            required=False,
+            location="json",
+            help="The category names must be a list of strings that don't contain commas within them..",
+        )
     
     @swag_from('./docs/Classifiers/post.yml')
     def post(self) -> ClassifierStatusJson:
         """Create a classifier."""
-
         args = self.reqparse.parse_args()
-        # category_names = args["category_names"]
+        category_names = args["category_names"] if args['category_names'] is not None else ['Null']
         # utils.Validate.no_duplicates(category_names)
         # utils.Validate.not_just_one(category_names)
         name = args["name"]
@@ -256,7 +254,7 @@ class Classifiers(ClassifierRelatedResource):
         #     name=name, category_names=category_names, notify_at_email=notify_at_email
         # )
         clsf = models.Classifier.create(
-            name=name, notify_at_email=notify_at_email
+            name=name, notify_at_email=notify_at_email, category_names=category_names
         )
         clsf.save()
         utils.Files.classifier_dir(classifier_id=clsf.classifier_id, ensure_exists=True)
@@ -317,6 +315,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         table_headers, table_data, unique_category_names = self._validate_training_file_and_get_data(
             file_
         )
+        app.logger.info(unique_category_names)
         file_.close()
         """Old version
         # Split into train and dev
@@ -427,7 +426,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
                 " We need at least two examples per category."
             )
 
-        return table_headers, table_data, unique_category_names
+        return table_headers, table_data, list(unique_category_names)
 
 
 class ClassifierTestSetStatusJson(TypedDict):
