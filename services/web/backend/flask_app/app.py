@@ -755,7 +755,7 @@ class TopicModelRelatedResource(BaseResource):
             remove_punctuation=topic_mdl.processing.remove_punctuation,
             do_stemming=topic_mdl.processing.do_stemming,
             do_lemmatizing=topic_mdl.processing.do_lemmatizing,
-            min_word_length_length=topic_mdl.processing.min_word_length
+            min_word_length=topic_mdl.processing.min_word_length
         )
 
     @staticmethod
