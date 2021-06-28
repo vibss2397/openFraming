@@ -18,7 +18,7 @@ The link above has guides on how to install Docker on the most popular platforms
 
 ## How to install
 
- 1. `git clone https://github.com/davidatbu/openFraming.git`
+ 1. `git clone https://github.com/vibss2397/openFraming.git`
  2. `cd openFraming`
  3. `docker-compose build`
  4. `docker-compose up`

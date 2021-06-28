@@ -5,6 +5,7 @@
 
 
 function getTMPreview(id) {
+    console.log(id);
     const GET_ONE_TOPIC_MDL = BASE_URL + `/topic_models/${id}/topics/preview`;
     $.ajax({
         url: GET_ONE_TOPIC_MDL,
@@ -15,9 +16,7 @@ function getTMPreview(id) {
             $('#tm-prev-name').empty().append(data.topic_model_name);
             $('#tm-prev-num').empty().append(data.num_topics);
             $('#previews').empty();
-            for (let i = 0; i < data.topic_previews.length; i++) {
-                formatPreviews(data.topic_names[i], data.topic_previews[i]);
-            }
+            showPreviews(data);
         },
         error: function (xhr, status, err) {
             console.log(xhr.responseText);
@@ -57,9 +56,7 @@ $(document).ready(function() {
         // $('#tm-prev-name').empty().append(data.topic_model_name);
         // $('#tm-prev-num').empty().append(data.num_topics);
         // $('#previews').empty();
-        // for (let i = 0; i < data.topic_previews.length; i++) {
-        //     formatPreviews(data.topic_names[i], data.topic_previews[i]);
-        // }
+        // showPreviews(data);
 
 
     }
@@ -71,7 +68,7 @@ $(document).ready(function() {
 
         } else {
             $('#error2').addClass('hidden');
-            let id = $('#pt-id').val();
+            let id = $('#tmp-id').val();
             getTMPreview(id);
         }
     })
@@ -84,47 +81,66 @@ $(document).ready(function() {
 /*  HELPERS    */
 /* * * * * * * */
 
+function showPreviews(data) {
+    let reformatted = reformatPreviewResponse(data);
+    let header = formatHeader(data.topic_names.slice(0, 5)); // again taking max of 5 topics
+    let body = formatBody(reformatted);
 
-function formatPreviews(name, preview) {
-    let keywords = formatLists(preview.keywords);
-    let examples = formatLists(preview.examples);
-    let newDiv = `
-              <div>
-                <div class="row">
-                  <div class="col-4">Topic Name</div>
-                  <div class="col">${name}</div>
-                </div>
-                <div class="row">
-                  <div class="col-4">Keywords</div>
-                  <div class="col">
-                    ${keywords}
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-4">Examples</div>
-                  <div class="col">
-                    ${examples}
-                  </div>
-                </div>
-                <hr>
-              </div>
+    let newTable = `
+        <thead>
+        ${header}
+        </thead>
+        <tbody>
+        ${body}
+        </tbody>
     `;
-    $('#previews').append(newDiv);
+
+    $('#previews').append(newTable);
 }
 
-
-function formatLists(list) {
-    let newList = `<ul>\n`;
-    for (let item of list) {
-        newList += `<li>${item}</li>\n`;
+function formatHeader(topic_names) {
+    let newRow = `<tr>\n<th scope="col">Keyword</th>\n`;
+    for (let i = 0; i < topic_names.length; i++) {
+        newRow += `<th scope="col">Topic ${i+1}</th>\n`
     }
-    newList += '</ul>';
-    return newList;
+    newRow += '</tr>';
+    return newRow;
+}
 
+function formatBody(reformatted) {
+    let newRow = ``;
+    for (let i = 0; i < reformatted.length; i++) {
+        newRow += `<tr>\n<th scope="row">${i+1}</th>\n`;
+        for (let kw of reformatted[i]) {
+            newRow += `<td>${kw}</td>`;
+        }
+        newRow += '</tr>\n';
+    }
+    return newRow;
 }
 
 
+function reformatPreviewResponse(data) {
+    // take at most 5 topics
+    let previews = data.topic_previews.slice(0, 5);
+    // take at most 10 keywords
+    let maxKeywords = Math.min(10, Math.max.apply(Math, previews.map(function(o) { return o.keywords.length; })));
 
+    let reformatted = [];
+    for (let i = 0; i < maxKeywords; i++) {
+        let newRow = [];
+        for (let pre of previews) {
+            if (pre.keywords.length <= i) {
+                newRow.push("");
+            } else {
+                newRow.push(pre.keywords[i]);
+            }
+        }
+        reformatted.push(newRow);
+    }
+
+    return reformatted;
+}
 
 
 

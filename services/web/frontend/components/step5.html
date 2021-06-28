@@ -31,22 +31,73 @@
 <div class="main-content container">
   <div class="row">
     <div id="framing-main" class="col-md-12">
-      <div class="card card-main">
+      <div id="policy-issue5" class="card card-main">
+        <div class="card-header">Select a Pre-Trained Policy Issue</div>
         <div class="card-body">
-          <p class="new-user">
+          <p>
             If you are satisfied with the performance of the frame classification model trained from
             <strong>Step 4</strong>, you can now take the last step to use the trained model to predict
             all the remaining unlabeled data.
           </p>
-        </div>
-      </div>
-      <br>
-      <div id="policy-issue5" class="card card-main">
-        <div class="card-header">Select a Pre-Trained Policy Issue</div>
-        <div class="card-body">
+          <div class="spacer"></div>
           <div class="row">
             <div class="col-sm">
-              Please select one of our pretrained policy issue models that corresponds to your documents.
+              Enter the ID of the OFAI-trained classification model from your confirmation email here:
+            </div>
+          </div>
+          <div class="spacer"></div>
+<!--     PT CUSTOM ID       -->
+          <div class="row">
+            <div class="col">
+              <label style="margin-right: 10px;">ID: </label>
+              <input type="text" id="pt-id" name="pt-id" value=""><br>
+            </div>
+          </div>
+          <hr>
+<!--     PT TEST FILE       -->
+          <div class="row">
+            <div class="col-sm"><b>Upload a file with unlabeled documents</b><i onclick="showHelp('pt-file')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
+            <div class="col-sm">
+              <input id="pt-testing-invisible" type="file" class="hidden" accept=".xls,.xlsx,.csv,.tsv">
+              <a style="width: 50%; color: white" id="pt-testing-visible" class="btn btn-theme mt-2 btn-block">Choose File</a>
+              <label id="pt-testing-filepath" class="hidden"></label></div>
+          </div>
+          <div id="pt-file-help" class="row help-div">
+            <div class="col-sm">
+              <label>*Upload a data file (.xls, .xlsx, .csv, or .tsv) containing a column labeled “example”, which will
+                contain the text documents. There should be one document per row. See the sample file. Note that the
+                unlabeled documents provided should be in the same language as used for your trained model.
+              </label>
+            </div>
+          </div>
+          <hr>
+
+<!--     PT NAME       -->
+          <div class="row">
+            <div class="col-sm"><b>Name your test set:</b></div>
+            <div class="col-sm"><input type="text" id="pt-name" name="pt-name" value=""></div>
+          </div>
+          <hr>
+<!--     PT EMAIL      -->
+          <div class="row">
+            <div class="col-sm"><b>Email address</b><i onclick="showHelp('pt-email')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
+            <div class="col-sm"><input type="text" id="pt-email" name="pt-email" value=""></div>
+          </div>
+          <div id="pt-email-help" class="row help-div">
+            <div class="col-sm">
+              <label>*We will send you an email when the frame prediction is complete and results files are ready to download.
+              </label>
+            </div>
+          </div>
+
+          <div class="spacer-l"></div>
+          <div class="row"><div class="col-sm" style="text-align: center"><strong>- OR -</strong></div></div>
+
+          <div class="row">
+            <div class="col-sm">
+              If your research topic corresponds to one of the following, you may consider using our pre-trained deep
+              learning model to predict media frames. See more information about these models at <a href="faq.html">FAQ</a>.
+              Select a model:
             </div>
           </div>
 <!--     PT EXISTING ID       -->
@@ -71,43 +122,6 @@
             </div>
           </div>
 
-          <div class="row"><div class="col-sm" style="text-align: center"><strong>- OR -</strong></div></div>
-          <div class="row">
-            <div class="col-sm">
-              If you trained a new frame classification model on our system, retrieve its ID from your confirmation email to use that
-              model instead.
-            </div>
-          </div>
-          <div class="spacer"></div>
-<!--     PT CUSTOM ID       -->
-          <div class="row">
-            <label style="margin-right: 10px;">ID: </label>
-            <input type="text" id="pt-id" name="pt-id" value=""><br>
-          </div>
-          <hr>
-<!--     PT TEST FILE       -->
-          <div class="row">
-            <div class="col-sm"><b>Upload a file with unlabeled documents</b></div>
-            <div class="col-sm">
-              <input id="pt-testing-invisible" type="file" class="hidden" accept=".xls,.xlsx,.csv,.tsv">
-              <a style="width: 50%; color: white" id="pt-testing-visible" class="btn btn-theme mt-2 btn-block">Choose File</a>
-              <label id="pt-testing-filepath" class="hidden"></label></div>
-          </div>
-          <hr>
-
-<!--     PT NAME       -->
-          <div class="row">
-            <div class="col-sm"><b>Name your test set:</b></div>
-            <div class="col-sm"><input type="text" id="pt-name" name="pt-name" value=""></div>
-          </div>
-          <hr>
-<!--     PT EMAIL      -->
-          <div class="row">
-            <div class="col-sm"><b>Email address</b></div>
-            <div class="col-sm"><input type="text" id="pt-email" name="pt-email" value=""></div>
-          </div>
-
-
           <div class="spacer"></div>
           <div class="row">
             <div class="col-2">
@@ -123,12 +137,6 @@
               <p id="error5-text"  class="new-user"><b>Error panel 5</b></p>
             </div>
           </div>
-
-<!--          <div id="success5"  class="hidden card card-main" style="background: #e3ffe3">-->
-<!--            <div class="card-body">-->
-<!--              <p id="success5-text"  class="new-user"><b>Success panel 5</b></p>-->
-<!--            </div>-->
-<!--          </div>-->
 
         </div>
 
