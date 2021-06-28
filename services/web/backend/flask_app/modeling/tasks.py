@@ -131,13 +131,15 @@ def do_topic_model_related_task(task_args: TopicModelTrainingTaskArgs,
             remove_punctuation_and_digits = processing_opts['remove_punctuation'],
             remove_stopwords=processing_opts['remove_stopwords'],
             lemmatize_content=processing_opts['do_lemmatizing'] 
-                            if task_args['language']=='english' else False
+                    if task_args['language']=='english' else False,
+            min_word_length=processing_opts['min_word_length']
         ) # nothing being done about 'do_stemming'
         corpus = Corpus(
             file_name=task_args["training_file"],
             content_column_name=Settings.CONTENT_COL,
             id_column_name=Settings.ID_COL,
             language=task_args["language"],
+            min_word_length=processing_opts["min_word_length"],
             extra_stopwords=processing_opts['extra_stopwords'],
             phrases_to_join=processing_opts['phrases_to_join'],
             processing_to_do=preprocessing_opts

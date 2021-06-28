@@ -131,6 +131,7 @@ class QueueManager(object):
         remove_punctuation: bool,
         do_stemming: bool,
         do_lemmatizing: bool,
+        min_word_length: int = 2,
         iterations: int = 1000
     ) -> None:
         app.logger.info("Enqueued lda training with pickle_data.")
@@ -153,6 +154,7 @@ class QueueManager(object):
                 remove_punctuation=remove_punctuation,
                 do_stemming=do_stemming,
                 do_lemmatizing=do_lemmatizing,
+                min_word_length=min_word_length
             ),
             job_timeout=-1,
         )

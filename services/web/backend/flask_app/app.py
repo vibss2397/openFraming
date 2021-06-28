@@ -11,7 +11,7 @@ import os
 import pandas as pd  # type: ignore
 import peewee as pw
 import typing_extensions as TT
-from flask import current_app
+# from flask import current_app
 from flask import Flask
 from flask import has_app_context
 from flask import Response
@@ -344,7 +344,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         classifier = models.Classifier.get(
             models.Classifier.classifier_id == classifier_id
         )
-        queue_manager: QueueManager = current_app.queue_manager
+        queue_manager: QueueManager = app.queue_manager
 
         # TODO: Add a check to make sure model training didn't start already and crashed
 
@@ -614,7 +614,7 @@ class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):
         test_set.inference_began = True
         test_set.save()
 
-        queue_manager: QueueManager = current_app.queue_manager
+        queue_manager: QueueManager = app.queue_manager
 
         # TODO: Add a check to make sure model training didn't start already and crashed
 
@@ -860,7 +860,13 @@ class TopicModels(TopicModelRelatedResource):
             location="json",
             help="Do we need to do lemmatize(english only)?",
         )
-
+        self.reqparse.add_argument(
+            name="min_word_length",
+            type=int,
+            required=True,
+            location="json",
+            help="Minimum length of a word to be considered valid?",
+        )
     @swag_from('./docs/topic_models/post.yml')
     def post(self) -> TopicModelStatusJson:
         """Create a classifier."""
@@ -872,6 +878,7 @@ class TopicModels(TopicModelRelatedResource):
             remove_punctuation=args['remove_punctuation'],
             do_stemming=args['do_stemming'],
             do_lemmatizing=args['do_lemmatizing'],
+            min_word_length=args['min_word_length']
         )
         topic_mdl_processing.save()
         topic_mdl = models.TopicModel.create(
@@ -924,7 +931,7 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
         train_file = utils.Files.topic_model_training_file(id_)
         self._write_headers_and_data_to_csv(table_headers, table_data, train_file)
 
-        queue_manager: QueueManager = current_app.queue_manager
+        queue_manager: QueueManager = app.queue_manager
 
         topic_mdl = self._ensure_topic_names(topic_mdl)
         queue_manager.add_topic_model_training(
@@ -939,7 +946,8 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
             phrases_to_join=topic_mdl.processing.phrases_to_join,
             remove_punctuation=topic_mdl.processing.remove_punctuation,
             do_stemming=topic_mdl.processing.do_stemming,
-            do_lemmatizing=topic_mdl.processing.do_lemmatizing
+            do_lemmatizing=topic_mdl.processing.do_lemmatizing,
+            min_word_length=topic_mdl.processing.min_word_length
         )
         topic_mdl.lda_set = models.LDASet()
         topic_mdl.lda_set.save()

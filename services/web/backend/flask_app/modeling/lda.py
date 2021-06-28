@@ -13,6 +13,7 @@ from gensim.models import CoherenceModel  # type: ignore
 from nltk.corpus import stopwords  # type: ignore
 from nltk.stem.wordnet import WordNetLemmatizer  # type: ignore
 
+from flask import current_app as app
 from flask_app.settings import Settings
 # from modeling.settings2 import Settings
 EXCEL_EXTENSIONS = {"xlsx", "xls"}
@@ -22,9 +23,9 @@ TSV_EXTENSIONS = {"tsv"}
 
 EXPERT_LABEL_COLUMN_NAME = "EXPERT_LABEL"
 
-import logging
+# import logging
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 
 class TopicModelMetricsJson(TT.TypedDict):
@@ -117,25 +118,25 @@ class Corpus(object):
         self.df_docs[Settings.STEMMED_CONTENT_COL] = self.df_docs[
             self.content_column_name
         ].apply(lambda b: b.lower())
-
-        try:
-            self.stopwords = stopwords.words(self.language)
-        except OSError:
-            raise ValueError(
-                "No stopwords exist for language {}!".format(self.language)
-            )
-        self.processing_to_do['remove_stopwords'] = True
+        if(self.processing_to_do['remove_stopwords']):
+            try:
+                self.stopwords = stopwords.words(self.language)
+            except OSError:
+                raise ValueError(
+                    "No stopwords exist for language {}!".format(self.language)
+                )
+        else:
+            self.stopwords = []
         # if(language=='english'):
         #     self.processing_to_do.get('lemmatize_content', True)
         #     self.processing_to_do.get('remove_short_words', True)
-
         self.stopwords += extra_stopwords
         preprocessing_completed = []
         print(self.processing_to_do)
         # Figure out if the user meant to remove phrases by checking
         # if they provided phrases to remove
-        remove_phrases_default = phrases_to_remove != []
-        if self.processing_to_do.get("remove_phrases", remove_phrases_default):
+        remove_phrases_default = (phrases_to_remove != [])
+        if remove_phrases_default:
             self.remove_phrases()
             preprocessing_completed.append("Removed phrases")
 
@@ -147,10 +148,9 @@ class Corpus(object):
             self.remove_punctuation_and_digits_and_tokenize()
             preprocessing_completed.append("Removed punctuation and digits")
         else:
-            print('here')
             self.tokenize_content()
             preprocessing_completed.append("Tokenized content")
-
+    
         if self.processing_to_do.get("remove_stopwords", True):
             self.remove_stopwords()
             preprocessing_completed.append("Removed stopwords")
@@ -247,7 +247,7 @@ class Corpus(object):
     def remove_short_words(self, min_length: int) -> bool:
         self.df_docs[Settings.STEMMED_CONTENT_COL] = self.df_docs[
             Settings.STEMMED_CONTENT_COL
-        ].apply(lambda content: [c for c in content if len(c) > 2])
+        ].apply(lambda content: [c for c in content if len(c) > min_word_length])
 
         return True
 

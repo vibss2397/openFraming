@@ -13,7 +13,7 @@ function getPreprocessingOptions() {
        remove_punctuation: $('#dc-punct').is(":checked"),
        do_stemming: $('#dc-stem').is(":checked"),
        do_lemmatizing: $('#dc-lemma').is(":checked"),
-    //    min_word_length: $('#dc-min-words').val(),
+       min_word_length: $('#dc-min-words').val(),
     }
 }
 
