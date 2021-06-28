@@ -106,8 +106,7 @@ class Corpus(object):
         self.phrases_to_remove = phrases_to_remove
         # if(len(self.phrases_to_remove)>0): self.processing_to_do['remove_phrases'] = True
         self.dont_stem = dont_stem
-
-        self.min_word_length = min_word_length        
+        self.min_word_length = min_word_length
         # self.processing_to_do['join_phrases'] = True
         punctuation_no_underscore = set(string.punctuation)
         punctuation_no_underscore.add("’")
@@ -247,7 +246,7 @@ class Corpus(object):
     def remove_short_words(self, min_length: int) -> bool:
         self.df_docs[Settings.STEMMED_CONTENT_COL] = self.df_docs[
             Settings.STEMMED_CONTENT_COL
-        ].apply(lambda content: [c for c in content if len(c) > min_word_length])
+        ].apply(lambda content: [c for c in content if len(c) > self.min_word_length])
 
         return True
 

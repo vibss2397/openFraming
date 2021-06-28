@@ -754,7 +754,8 @@ class TopicModelRelatedResource(BaseResource):
             phrases_to_join=topic_mdl.processing.phrases_to_join,
             remove_punctuation=topic_mdl.processing.remove_punctuation,
             do_stemming=topic_mdl.processing.do_stemming,
-            do_lemmatizing=topic_mdl.processing.do_lemmatizing
+            do_lemmatizing=topic_mdl.processing.do_lemmatizing,
+            min_word_length_length=topic_mdl.processing.min_word_length
         )
 
     @staticmethod
@@ -891,6 +892,7 @@ class TopicModels(TopicModelRelatedResource):
         )
     #     # Default topic names
         topic_mdl.save()
+        app.logger.info(topic_mdl.processing.min_word_length)
         utils.Files.topic_model_dir(id_=topic_mdl.id_, ensure_exists=True)
         return self._topic_model_status_json(topic_mdl)
     
@@ -1061,6 +1063,7 @@ class TopicModelsTopicsPreview(TopicModelRelatedResource):
                 "remove_punctuation": topic_mdl_status_json["remove_punctuation"],
                 "do_stemming": topic_mdl_status_json["do_stemming"],
                 "do_lemmatizing": topic_mdl_status_json["do_lemmatizing"],
+                "min_word_length": topic_mdl_status_json['min_word_length']
             }
         )
         return topic_preview_json

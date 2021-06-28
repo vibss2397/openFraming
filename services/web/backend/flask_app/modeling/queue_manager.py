@@ -51,6 +51,7 @@ class TopicModelProcessingOptions(TT.TypedDict):
     remove_punctuation: bool
     do_stemming: bool
     do_lemmatizing: bool
+    min_word_length: int
 
 class QueueManager(object):
     def __init__(self) -> None:
@@ -135,7 +136,17 @@ class QueueManager(object):
         iterations: int = 1000
     ) -> None:
         app.logger.info("Enqueued lda training with pickle_data.")
-
+        topic_mdl_processing_temp = TopicModelProcessingOptions(
+            remove_stopwords=remove_stopwords,
+            extra_stopwords=[] if extra_stopwords is None else extra_stopwords,
+            phrases_to_join=[] if phrases_to_join is None else phrases_to_join,
+            remove_punctuation=remove_punctuation,
+            do_stemming=do_stemming,
+            do_lemmatizing=do_lemmatizing,
+            min_word_length=min_word_length
+        )
+        app.logger.info('GGGGGGGGG---------------------')
+        app.logger.info(topic_mdl_processing_temp['min_word_length'])
         self.topic_models_queue.enqueue(
             "flask_app.modeling.tasks.do_topic_model_related_task",
             TopicModelTrainingTaskArgs(
@@ -147,14 +158,7 @@ class QueueManager(object):
                 mallet_bin_directory=mallet_bin_directory,
                 language=language
             ),
-            TopicModelProcessingOptions(
-                remove_stopwords=remove_stopwords,
-                extra_stopwords=[] if extra_stopwords is None else extra_stopwords,
-                phrases_to_join=[] if phrases_to_join is None else phrases_to_join,
-                remove_punctuation=remove_punctuation,
-                do_stemming=do_stemming,
-                do_lemmatizing=do_lemmatizing,
-                min_word_length=min_word_length
-            ),
+            topic_mdl_processing_temp
+            ,
             job_timeout=-1,
         )
