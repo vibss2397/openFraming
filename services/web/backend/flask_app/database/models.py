@@ -206,6 +206,7 @@ class TopicModelProcessing(BaseModel):
     remove_punctuation: bool = pw.BooleanField(default=True)
     do_stemming: bool = pw.BooleanField()
     do_lemmatizing: bool = pw.BooleanField()
+    min_word_length: int = pw.IntegerField()
 
 class TopicModel(BaseModel):
     """."""

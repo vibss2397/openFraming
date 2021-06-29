@@ -5,6 +5,7 @@
 
 
 function getTMPreview(id) {
+    console.log(id);
     const GET_ONE_TOPIC_MDL = BASE_URL + `/topic_models/${id}/topics/preview`;
     $.ajax({
         url: GET_ONE_TOPIC_MDL,
@@ -67,7 +68,7 @@ $(document).ready(function() {
 
         } else {
             $('#error2').addClass('hidden');
-            let id = $('#pt-id').val();
+            let id = $('#tmp-id').val();
             getTMPreview(id);
         }
     })

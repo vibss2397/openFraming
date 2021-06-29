@@ -6,11 +6,12 @@ import re
 import typing as T
 from collections import Counter
 from pathlib import Path
+import os
 
 import pandas as pd  # type: ignore
 import peewee as pw
 import typing_extensions as TT
-from flask import current_app
+# from flask import current_app
 from flask import Flask
 from flask import has_app_context
 from flask import Response
@@ -20,6 +21,8 @@ from flask_restful import Api  # type: ignore
 from flask_restful import reqparse
 from flask_restful import Resource
 from flask import current_app as app
+from flask_cors import CORS
+from flasgger import Swagger, swag_from
 from playhouse.flask_utils import get_object_or_404
 from sklearn import model_selection  # type: ignore
 from typing_extensions import TypedDict
@@ -37,11 +40,9 @@ from flask_app.modeling.queue_manager import QueueManager
 from flask_app.settings import needs_settings_init
 from flask_app.settings import Settings
 from flask_app.version import Version
-import os
-from flask_cors import CORS
 API_URL_PREFIX = "/api"
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 class HasReqParseProtocol(TT.Protocol):
     reqparse: reqparse.RequestParser
@@ -198,17 +199,16 @@ class ClassifierRelatedResource(BaseResource):
 class OneClassifier(ClassifierRelatedResource):
 
     url = "/classifiers/<int:classifier_id>"
-
+    @swag_from('./docs/Classifiers/get_single.yml')
     def get(self, classifier_id: int) -> ClassifierStatusJson:
         clsf = get_object_or_404(
             models.Classifier, models.Classifier.classifier_id == classifier_id
         )
         return self._classifier_status(clsf)
 
-# @app.route('/something')
 class Something(Resource):
     def get(self):
-        logger.info('I have arrived here')
+        app.logger.info('I have arrived here')
         return {'hello': 'world', 'a': Settings.SERVER_NAME}
 
 
@@ -236,27 +236,31 @@ class Classifiers(ClassifierRelatedResource):
             name="category_names",
             type=self._validate_serializable_list_value,
             action="append",
-            required=True,
+            required=False,
             location="json",
             help="The category names must be a list of strings that don't contain commas within them..",
         )
-
+    
+    @swag_from('./docs/Classifiers/post.yml')
     def post(self) -> ClassifierStatusJson:
         """Create a classifier."""
-
         args = self.reqparse.parse_args()
-        category_names = args["category_names"]
-        utils.Validate.no_duplicates(category_names)
-        utils.Validate.not_just_one(category_names)
+        category_names = args["category_names"] if args['category_names'] is not None else ['Null']
+        # utils.Validate.no_duplicates(category_names)
+        # utils.Validate.not_just_one(category_names)
         name = args["name"]
         notify_at_email = args["notify_at_email"]
+        # clsf = models.Classifier.create(
+        #     name=name, category_names=category_names, notify_at_email=notify_at_email
+        # )
         clsf = models.Classifier.create(
-            name=name, category_names=category_names, notify_at_email=notify_at_email
+            name=name, notify_at_email=notify_at_email, category_names=category_names
         )
         clsf.save()
         utils.Files.classifier_dir(classifier_id=clsf.classifier_id, ensure_exists=True)
         return self._classifier_status(clsf)
 
+    @swag_from('./docs/Classifiers/get.yml')
     def get(self) -> T.List[ClassifierStatusJson]:
         """Get a list of classifiers."""
         res = [self._classifier_status(clsf) for clsf in models.Classifier.select()]
@@ -275,6 +279,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
             name="file", type=FileStorage, required=True, location="files"
         )
 
+    @swag_from('./docs/Classifiers/post_training.yml')
     def post(self, classifier_id: int) -> ClassifierStatusJson:
         """Upload a training set for classifier, and start training.
 
@@ -294,30 +299,41 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
                 models.Classifier.classifier_id == classifier_id
             )
         except models.Classifier.DoesNotExist:
-            logger.info('Classifier with id' + str(classifier_id) + 'not found')
+            app.logger.info('Classifier with id' + str(classifier_id) + 'not found')
             raise NotFound("classifier not found.")
 
         if classifier.train_set is not None:
-            logger.info("This classifier already has a training set.")
+            app.logger.info("This classifier already has a training set.")
             raise AlreadyExists("This classifier already has a training set.")
 
+        """ Old version
         table_headers, table_data = self._validate_training_file_and_get_data(
-            classifier.category_names, file_
+             classifier.category_names, file_
         )
+        """
+        
+        table_headers, table_data, unique_category_names = self._validate_training_file_and_get_data(
+            file_
+        )
+        app.logger.info(unique_category_names)
         file_.close()
+        """Old version
         # Split into train and dev
-        # ss = model_selection.StratifiedShuffleSplit(n_splits=1, test_size=0)
-        # X, y = zip(*table_data)
-        # train_indices, dev_indices = next(ss.split(X, y))
-
+        ss = model_selection.StratifiedShuffleSplit(n_splits=1, test_size=0)
+        X, y = zip(*table_data)
+        train_indices, dev_indices = next(ss.split(X, y))
+        """
         train_data = [table_data[i] for i in range(len(table_data))]
-        # dev_data = [table_data[i] for i in dev_indices]
+        """dev_data = [table_data[i] for i in dev_indices]"""
 
         train_file = utils.Files.classifier_train_set_file(classifier_id)
         self._write_headers_and_data_to_csv(table_headers, train_data, train_file)
-        # dev_file = utils.Files.classifier_dev_set_file(classifier_id)
-        # self._write_headers_and_data_to_csv(table_headers, dev_data, dev_file)
-
+        
+        """Old version
+        dev_file = utils.Files.classifier_dev_set_file(classifier_id)
+        self._write_headers_and_data_to_csv(table_headers, dev_data, dev_file)
+        """
+        classifier.category_names = unique_category_names
         classifier.train_set = models.LabeledSet()
         # classifier.dev_set = models.LabeledSet()
         classifier.train_set.save()
@@ -328,7 +344,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         classifier = models.Classifier.get(
             models.Classifier.classifier_id == classifier_id
         )
-        queue_manager: QueueManager = current_app.queue_manager
+        queue_manager: QueueManager = app.queue_manager
 
         # TODO: Add a check to make sure model training didn't start already and crashed
 
@@ -345,20 +361,27 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         )
 
         return self._classifier_status(classifier)
-
+    
+    """ Original implementation(now a relic.)
     @staticmethod
     def _validate_training_file_and_get_data(
         category_names: T.List[str], file_: FileStorage
     ) -> T.Tuple[T.List[str], T.List[T.List[str]]]:
+    """
+    @staticmethod
+    def _validate_training_file_and_get_data(
+        file_: FileStorage
+    ) -> T.Tuple[T.List[str], T.List[T.List[str]]]:
         """Validate user uploaded file and return uploaded validated data.
 
         Args:
-            category_names: The categories for the classifier.
+            category_names: The categories for the classifier. --X(not needed now).
             file_: uploaded file.
 
         Returns:
             table_headers: A list of length 2.
             table_data: A list of lists of length 2.
+            category_names: list of categories for the classifier.
         """
         # TODO: Write tests for all of these!
         
@@ -382,16 +405,16 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         category_names_counter = Counter(category for _, category in table_data)
 
         unique_category_names = category_names_counter.keys()
-        if set(category_names) != unique_category_names:
-            # TODO: Lower case category names before checking.
-            # TODO: More helpful error messages when there is an error with the
-            # the categories in an uploaded training file.
-            raise UnprocessableEntity(
-                "The categories for this classifier are"
-                f" {category_names}. But the uploaded file either"
-                " has some categories missing, or has categories in addition to the"
-                " ones indicated."
-            )
+        # if set(category_names) != unique_category_names:
+        #     # TODO: Lower case category names before checking.
+        #     # TODO: More helpful error messages when there is an error with the
+        #     # the categories in an uploaded training file.
+        #     raise UnprocessableEntity(
+        #         "The categories for this classifier are"
+        #         f" {category_names}. But the uploaded file either"
+        #         " has some categories missing, or has categories in addition to the"
+        #         " ones indicated."
+        #     )
 
         categories_with_less_than_two_exs = [
             category for category, count in category_names_counter.items() if count < 2
@@ -403,7 +426,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
                 " We need at least two examples per category."
             )
 
-        return table_headers, table_data
+        return table_headers, table_data, list(unique_category_names)
 
 
 class ClassifierTestSetStatusJson(TypedDict):
@@ -465,14 +488,15 @@ class ClassifiersTestSets(ClassifierTestSetRelatedResource):
             required=True,
             location="json",
         )
-
+    @swag_from('./docs/Classifiers/get_test_set.yml')
     def get(self, classifier_id: int) -> T.List[ClassifierTestSetStatusJson]:
         clsf = get_object_or_404(
             models.Classifier, models.Classifier.classifier_id == classifier_id
         )
 
         return [self._test_set_status(test_set) for test_set in clsf.test_sets]
-
+    
+    @swag_from('./docs/Classifiers/post_test_set.yml')
     def post(self, classifier_id: int) -> ClassifierTestSetStatusJson:
         args = self.reqparse.parse_args()
         test_set_name: str = args["test_set_name"]
@@ -513,7 +537,8 @@ class ClassifiersTestSetsPredictions(
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         SupportSpreadsheetFileType.__init__(self)
-
+    
+    @swag_from('./docs/Classifiers/test_prediction.yml')
     def get(self, classifier_id: int, test_set_id: int) -> Response:
         test_set = get_object_or_404(models.TestSet, models.TestSet.id_ == test_set_id)
         if test_set.classifier.classifier_id != classifier_id:
@@ -557,6 +582,7 @@ class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):
             name="file", type=FileStorage, required=True, location="files"
         )
 
+    @swag_from('./docs/Classifiers/test_file.yml')
     def post(self, classifier_id: int, test_set_id: int) -> ClassifierTestSetStatusJson:
         """Upload a training set for classifier, and start training.
 
@@ -588,7 +614,7 @@ class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):
         test_set.inference_began = True
         test_set.save()
 
-        queue_manager: QueueManager = current_app.queue_manager
+        queue_manager: QueueManager = app.queue_manager
 
         # TODO: Add a check to make sure model training didn't start already and crashed
 
@@ -728,7 +754,8 @@ class TopicModelRelatedResource(BaseResource):
             phrases_to_join=topic_mdl.processing.phrases_to_join,
             remove_punctuation=topic_mdl.processing.remove_punctuation,
             do_stemming=topic_mdl.processing.do_stemming,
-            do_lemmatizing=topic_mdl.processing.do_lemmatizing
+            do_lemmatizing=topic_mdl.processing.do_lemmatizing,
+            min_word_length=topic_mdl.processing.min_word_length
         )
 
     @staticmethod
@@ -742,7 +769,8 @@ class TopicModelRelatedResource(BaseResource):
 class OneTopicModel(TopicModelRelatedResource):
 
     url = "/topic_models/<int:topic_model_id>"
-
+    
+    @swag_from('./docs/topic_models/get_single_topic.yml')
     def get(self, topic_model_id: int) -> TopicModelStatusJson:
         topic_mdl = get_object_or_404(
             models.TopicModel, models.TopicModel.id_ == topic_model_id
@@ -833,7 +861,14 @@ class TopicModels(TopicModelRelatedResource):
             location="json",
             help="Do we need to do lemmatize(english only)?",
         )
-
+        self.reqparse.add_argument(
+            name="min_word_length",
+            type=int,
+            required=True,
+            location="json",
+            help="Minimum length of a word to be considered valid?",
+        )
+    @swag_from('./docs/topic_models/post.yml')
     def post(self) -> TopicModelStatusJson:
         """Create a classifier."""
         args = self.reqparse.parse_args()
@@ -844,6 +879,7 @@ class TopicModels(TopicModelRelatedResource):
             remove_punctuation=args['remove_punctuation'],
             do_stemming=args['do_stemming'],
             do_lemmatizing=args['do_lemmatizing'],
+            min_word_length=args['min_word_length']
         )
         topic_mdl_processing.save()
         topic_mdl = models.TopicModel.create(
@@ -856,9 +892,11 @@ class TopicModels(TopicModelRelatedResource):
         )
     #     # Default topic names
         topic_mdl.save()
+        app.logger.info(topic_mdl.processing.min_word_length)
         utils.Files.topic_model_dir(id_=topic_mdl.id_, ensure_exists=True)
         return self._topic_model_status_json(topic_mdl)
-
+    
+    @swag_from('./docs/topic_models/get.yml')
     def get(self) -> T.List[TopicModelStatusJson]:
         res = [
             self._topic_model_status_json(topic_mdl)
@@ -877,6 +915,8 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
         self.reqparse.add_argument(
             name="file", type=FileStorage, required=True, location="files"
         )
+    
+    @swag_from('./docs/topic_models/post_training.yml')
     def post(self, id_: int) -> dict:
         args = self.reqparse.parse_args()
         file_: FileStorage = args["file"]
@@ -893,7 +933,7 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
         train_file = utils.Files.topic_model_training_file(id_)
         self._write_headers_and_data_to_csv(table_headers, table_data, train_file)
 
-        queue_manager: QueueManager = current_app.queue_manager
+        queue_manager: QueueManager = app.queue_manager
 
         topic_mdl = self._ensure_topic_names(topic_mdl)
         queue_manager.add_topic_model_training(
@@ -908,7 +948,8 @@ class TopicModelsTrainingFile(TopicModelRelatedResource):
             phrases_to_join=topic_mdl.processing.phrases_to_join,
             remove_punctuation=topic_mdl.processing.remove_punctuation,
             do_stemming=topic_mdl.processing.do_stemming,
-            do_lemmatizing=topic_mdl.processing.do_lemmatizing
+            do_lemmatizing=topic_mdl.processing.do_lemmatizing,
+            min_word_length=topic_mdl.processing.min_word_length
         )
         topic_mdl.lda_set = models.LDASet()
         topic_mdl.lda_set.save()
@@ -965,7 +1006,8 @@ class TopicModelsTopicsNames(TopicModelRelatedResource):
             location="json",
             help="",
         )
-
+    
+    @swag_from('./docs/topic_models/topic_names.yml')
     def post(self, id_: int) -> TopicModelStatusJson:
         args = self.reqparse.parse_args()
         topic_names: T.List[str] = args["topic_names"]
@@ -985,7 +1027,8 @@ class TopicModelsTopicsNames(TopicModelRelatedResource):
 class TopicModelsTopicsPreview(TopicModelRelatedResource):
 
     url = "/topic_models/<int:topic_model_id>/topics/preview"
-
+    
+    @swag_from('./docs/topic_models/topics_preview.yml')
     def get(self, topic_model_id: int) -> TopicModelPreviewJson:
         topic_mdl = get_object_or_404(
             models.TopicModel, models.TopicModel.id_ == topic_model_id
@@ -1020,6 +1063,7 @@ class TopicModelsTopicsPreview(TopicModelRelatedResource):
                 "remove_punctuation": topic_mdl_status_json["remove_punctuation"],
                 "do_stemming": topic_mdl_status_json["do_stemming"],
                 "do_lemmatizing": topic_mdl_status_json["do_lemmatizing"],
+                "min_word_length": topic_mdl_status_json['min_word_length']
             }
         )
         return topic_preview_json
@@ -1081,7 +1125,8 @@ class TopicModelsKeywords(TopicModelRelatedResource, SupportSpreadsheetFileType)
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         SupportSpreadsheetFileType.__init__(self)
-
+    
+    @swag_from('./docs/topic_models/keywords.yml')
     def get(self, topic_model_id: int) -> Response:
         topic_mdl = get_object_or_404(
             models.TopicModel, models.TopicModel.id_ == topic_model_id
@@ -1139,6 +1184,7 @@ class TopicModelsTopicsByDoc(TopicModelRelatedResource, SupportSpreadsheetFileTy
         self.reqparse = reqparse.RequestParser()
         SupportSpreadsheetFileType.__init__(self)
 
+    @swag_from('./docs/topic_models/topics_by_doc.yml')
     def get(self, topic_model_id: int) -> Response:
         topic_mdl = get_object_or_404(
             models.TopicModel, models.TopicModel.id_ == topic_model_id
@@ -1227,17 +1273,38 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
     Returns:
         app: Flask() object.
     """
-    logging.basicConfig()
-    logger.setLevel(logging_level)
+    # logging.basicConfig()
+    # logger.setLevel(logging_level)
 
     # Usually, we'd read this from app.config, but we need it to create app.config ...
     app = Flask(__name__)
     CORS(app)
+
+    # Create an APISpec
+    template = {
+        "swagger": "2.0",
+        "info": {
+            "title": "OpenFraming API documentation",
+            "description": "A minimal UI for checking out API documentation",
+            "version": "0.1.1",
+            "contact": {
+            "name": "Derry Wijaya, Lei Guo",
+            "url": "help.openframing@gmail.com",
+            }
+        },
+    }
+    app.config['SWAGGER'] = {
+        'title': 'OpenFraming API',
+        'uiversion': 3,
+        'specs_route': '/docs/',
+        'doc_dir': '/docs/'
+    }
+    swagger = Swagger(app, template=template)
     
-    # gunicorn_logger = logging.getLogger('gunicorn.access')
-    # # app.logger.removeHandler(default_handler)
-    # app.logger.handlers.extend(gunicorn_logger.handlers)
-    # app.logger.setLevel(gunicorn_logger.level)
+    gunicorn_logger = logging.getLogger('gunicorn.access')
+    # app.logger.removeHandler(default_handler)
+    app.logger.handlers.extend(gunicorn_logger.handlers)
+    app.logger.setLevel(gunicorn_logger.level)
 
     app.config["SERVER_NAME"] = Settings.SERVER_NAME
     # app.config["SERVER_NAME"] = "0.0.0.0:5000"
@@ -1253,12 +1320,12 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
         database = pw.SqliteDatabase(str(Settings.DATABASE_FILE))
         models.database_proxy.initialize(database)
         with models.database_proxy.connection_context():
-            logger.info("Created tables because SQLITE file was not found.")
+            app.logger.info("Created tables because SQLITE file was not found.")
             models.database_proxy.create_tables(models.MODELS)
     else:
         database = pw.SqliteDatabase(str(Settings.DATABASE_FILE))
         models.database_proxy.initialize(database)
-        logger.info("SQLITE file found. Not creating tables")
+        app.logger.info("SQLITE file found. Not creating tables")
 
     app.queue_manager = QueueManager()
 

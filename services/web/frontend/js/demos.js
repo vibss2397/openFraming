@@ -279,9 +279,9 @@ function completeObject(x, separate_categories){
         })
     }
     return x;
-}
+  }
 
-function process_data(data, data_processing){
+  function process_data(data, data_processing){
     let count_category = []
     if(data_processing.indexOf('left')!=-1){
         temp = data.filter(x=>{
@@ -476,7 +476,7 @@ function create_bar(data2, color_bar){
     $('#gunv-bars').html('By Month <br>');
     svg_bar = d3.select("#gunv-bars")
         .append("svg")
-        .attr("width", bar_width + margin.left + margin.right)
+        .attr("width", bar_width + margin.left + margin.right + 130)
         .attr("height", bar_height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
