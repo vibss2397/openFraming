@@ -171,9 +171,9 @@ class ClassifierRelatedResource(BaseResource):
                 status = "completed"
                 metrics = ClassifierMetricsJson(
                     accuracy=clsf.train_set.metrics.accuracy,
-                    macro_f1_score=clsf.train_set.metrics.macro_f1_score,
-                    macro_precision=clsf.train_set.metrics.macro_precision,
-                    macro_recall=clsf.train_set.metrics.macro_recall,
+                    precision=clsf.train_set.metrics.macro_precision,
+                    f1_score=clsf.train_set.metrics.macro_f1_score,
+                    recall=clsf.train_set.metrics.macro_recall,
                 )
             elif clsf.train_set.error_encountered:
                 # assert clsf.dev_set.error_encountered
