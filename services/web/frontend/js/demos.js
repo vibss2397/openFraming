@@ -276,11 +276,11 @@ function completeObject(x, separate_categories){
             if(!(category in  x[key])){
                 x[key][category] = 0;
             }
-        })  
+        })
     }
     return x;
   }
-  
+
   function process_data(data, data_processing){
     let count_category = []
     if(data_processing.indexOf('left')!=-1){
@@ -307,7 +307,7 @@ function completeObject(x, separate_categories){
         });
         count_category = count_category.concat(temp);
     }
-  
+
     if(data_processing.indexOf('2016')!=-1){
         temp = data.filter(x=>{
             if(x.date.getFullYear()==2016){
@@ -316,7 +316,7 @@ function completeObject(x, separate_categories){
         });
         count_category = count_category.concat(temp);
     }
-  
+
     if(data_processing.indexOf('2017')!=-1){
         temp = data.filter(x=>{
             if(x.date.getFullYear()==2017){
@@ -325,7 +325,7 @@ function completeObject(x, separate_categories){
         });
         count_category = count_category.concat(temp);
     }
-  
+
     if(data_processing.indexOf('2018')!=-1){
         temp = data.filter(x=>{
             if(x.date.getFullYear()==2018){
@@ -334,11 +334,11 @@ function completeObject(x, separate_categories){
         });
         count_category = count_category.concat(temp);
     }
-  
+
     if(count_category.length==0){
         count_category = data
     }
-  
+
     let data_names_with_leaning = count_category
         .map(x=>[x.name, x.leaning])
         .reduce((r, [v, k]) => {
@@ -476,7 +476,7 @@ function create_bar(data2, color_bar){
     $('#gunv-bars').html('By Month <br>');
     svg_bar = d3.select("#gunv-bars")
         .append("svg")
-        .attr("width", bar_width + margin.left + margin.right)
+        .attr("width", bar_width + margin.left + margin.right + 130)
         .attr("height", bar_height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -607,7 +607,7 @@ function show_gunviolence(val='all'){
         pie_height = 660,
         pie_margin = 110;
 
-    margin = {top: 10, right: 25, bottom: 20, left: 60},
+    margin = {top: 10, right: 25, bottom: 20, left: 75},
         bar_width = 550,
         bar_height = 500;
 
@@ -683,3 +683,15 @@ $(document).ready(function() {
     });
 
 });
+
+
+function toggleArrow(id) {
+    let classes = document.getElementById(id).className.split(' ');
+    if (classes.includes('fa-caret-down')) {
+        $(`#${id}`).removeClass('fa-caret-down')
+            .addClass('fa-caret-up');
+    } else if (classes.includes('fa-caret-up')) {
+        $(`#${id}`).removeClass('fa-caret-up')
+            .addClass('fa-caret-down');
+    }
+}
