@@ -21,6 +21,7 @@ function getTMPreview(id) {
         error: function (xhr, status, err) {
             console.log(xhr.responseText);
             let error = getErrorMessage(JSON.parse(xhr.responseText).message);
+            $('#preview-info').addClass('hidden');
             $('#error2').html(`An error occurred while finding your topic model: ${error}`).removeClass('hidden');
         },
     });
