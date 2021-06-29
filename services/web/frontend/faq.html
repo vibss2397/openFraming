@@ -21,7 +21,18 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
   <!-- LOCAL FILES -->
-<!--  <script type="module" src="js/client.js"></script>-->
+  <script>
+      function toggleArrow(id) {
+          let classes = document.getElementById(id).className.split(' ');
+          if (classes.includes('fa-caret-down')) {
+              $(`#${id}`).removeClass('fa-caret-down')
+                  .addClass('fa-caret-up');
+          } else if (classes.includes('fa-caret-up')) {
+              $(`#${id}`).removeClass('fa-caret-up')
+                  .addClass('fa-caret-down');
+          }
+      }
+  </script>
 
   <title>Open Framing</title>
 </head>
@@ -29,7 +40,7 @@
 <body style="background-image: none !important;">
 
 <nav class="navbar navbar-expand-lg navbar-light sticky-top">
-  <a class="navbar-brand" href="home.html">OpenFraming AI</a>
+  <a class="navbar-brand" href="home.html"><img src="images/openframing.png" class="logo">OpenFraming AI</a>
   <ul class="navbar-nav ml-auto">
     <li class="nav-item">
       <a class="nav-link" href="playground.html">Get Started</a>
@@ -41,10 +52,10 @@
       <a class="nav-link" href="faq.html">FAQ</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="https://github.com/davidatbu/openFraming/tree/master">Source Code</a>
+      <a class="nav-link" href="https://github.com/vibss2397/openFraming/tree/ui-revamp">Source Code</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link">About</a>
+      <a class="nav-link">API</a>
     </li>
   </ul>
 </nav>
@@ -58,15 +69,13 @@
   <div id="accordion">
 <!--   GENERAL SECTION   -->
     <div class="card">
-      <div class="card-header" id="headingOne">
-        <h5 class="mb-0">
-          <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            General
-          </button>
-        </h5>
-      </div>
+      <button onclick="toggleArrow('arrow1')" style="padding: 0;" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        <div style="padding: 20px;" class="card-header" id="headingOne">
+          <h5 class="mb-0">General <i id="arrow1" class="fa fa-caret-down accordion-arrow" aria-hidden="true"></i></h5>
+        </div>
+      </button>
 
-      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
           <ul>
             <li><b>Q: I do not have a computational background, can I use your system?</b>
@@ -229,13 +238,11 @@
     </div>
 <!--   LDA SECTION   -->
     <div class="card">
-      <div class="card-header" id="headingTwo">
-        <h5 class="mb-0">
-          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-            LDA topic modeling (Step 1)
-          </button>
-        </h5>
-      </div>
+      <button onclick="toggleArrow('arrow2')" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        <div style="padding: 20px;" class="card-header" id="headingTwo">
+          <h5 class="mb-0">LDA topic modeling (Step 1) <i id="arrow2" class="fa fa-caret-down accordion-arrow" aria-hidden="true"></i></h5>
+        </div>
+      </button>
       <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
         <div class="card-body">
           <ul>
@@ -301,13 +308,11 @@
     </div>
 <!--   BERT 1 SECTION   -->
     <div class="card">
-      <div class="card-header" id="headingThree">
-        <h5 class="mb-0">
-          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-            Train a deep learning model and make predictions (Step 4-5)
-          </button>
-        </h5>
-      </div>
+      <button onclick="toggleArrow('arrow3')" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        <div style="padding: 20px;" class="card-header" id="headingThree">
+          <h5 class="mb-0">Train a deep learning model and make predictions (Step 4-5) <i id="arrow3" class="fa fa-caret-down accordion-arrow" aria-hidden="true"></i></h5>
+        </div>
+      </button>
       <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
         <div class="card-body">
           <ul>
@@ -449,13 +454,11 @@
     </div>
 <!--   BERT 2 SECTION   -->
     <div class="card">
-      <div class="card-header" id="headingFour">
-        <h5 class="mb-0">
-          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-            Use existing deep learning models (Step 5)
-          </button>
-        </h5>
-      </div>
+      <button onclick="toggleArrow('arrow4')" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+        <div style="padding: 20px;" class="card-header" id="headingFour">
+          <h5 class="mb-0">Use existing deep learning models (Step 5) <i id="arrow4" class="fa fa-caret-down accordion-arrow" aria-hidden="true"></i></h5>
+        </div>
+      </button>
       <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
         <div class="card-body">
           <ul>

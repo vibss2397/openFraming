@@ -32,7 +32,7 @@
   <div class="row">
     <div id="framing-main" class="col-md-12">
       <div id="policy-issue5" class="card card-main">
-        <div class="card-header">Select a Pre-Trained Policy Issue</div>
+        <div class="card-header">Predict Frames with Deep Learning</div>
         <div class="card-body">
           <p>
             If you are satisfied with the performance of the frame classification model trained from
@@ -65,7 +65,8 @@
           <div id="pt-file-help" class="row help-div">
             <div class="col-sm">
               <label>*Upload a data file (.xls, .xlsx, .csv, or .tsv) containing a column labeled “example”, which will
-                contain the text documents. There should be one document per row. See the sample file. Note that the
+                contain the text documents. There should be one document per row. See the
+                <a href="examples/step5.csv" download="framing_sample_test.csv">sample file</a>. Note that the
                 unlabeled documents provided should be in the same language as used for your trained model.
               </label>
             </div>
@@ -74,7 +75,7 @@
 
 <!--     PT NAME       -->
           <div class="row">
-            <div class="col-sm"><b>Name your test set:</b></div>
+            <div class="col-sm"><b>Name the file you would like to make predictions on:</b></div>
             <div class="col-sm"><input type="text" id="pt-name" name="pt-name" value=""></div>
           </div>
           <hr>
@@ -90,9 +91,29 @@
             </div>
           </div>
 
-          <div class="spacer-l"></div>
-          <div class="row"><div class="col-sm" style="text-align: center"><strong>- OR -</strong></div></div>
-
+          <div class="spacer"></div>
+          <div class="row">
+            <div class="col-2">
+              <a id="submit5" style="width: 140%; color: white;" class="btn btn-theme mt-2 btn-block">Submit</a>
+            </div>
+            <div id="pt-spinner" class="col-10 help-div">
+              <i style="margin-left: 3%; margin-top: 2%;" class="fas fa-spinner fa-spin"></i>
+            </div>
+          </div>
+          <br>
+          <div id="error5" class="hidden card card-main" style="background: #ffe3e3">
+            <div class="card-body">
+              <p id="error5-text"  class="new-user"><b>Error panel 5</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+<!--     PT EXISTING ID      -->
+      <div class="spacer-m"></div>
+      <div class="row"><div class="col-sm" style="text-align: center"><strong>- OR -</strong></div></div>
+      <div class="card card-main">
+        <div class="card-header">Use Existing Deep Learning Models</div>
+        <div class="card-body">
           <div class="row">
             <div class="col-sm">
               If your research topic corresponds to one of the following, you may consider using our pre-trained deep
@@ -100,7 +121,6 @@
               Select a model:
             </div>
           </div>
-<!--     PT EXISTING ID       -->
           <div class="row">
             <div class="col-sm policy-radio">
               <form>
@@ -121,27 +141,63 @@
 
             </div>
           </div>
+          <hr>
+<!--     PT TEST FILE 2     -->
+          <div class="row">
+            <div class="col-sm"><b>Upload a file with unlabeled documents</b><i onclick="showHelp('pt-file-2')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
+            <div class="col-sm">
+              <input id="pt-testing-invisible-2" type="file" class="hidden" accept=".xls,.xlsx,.csv,.tsv">
+              <a style="width: 50%; color: white" id="pt-testing-visible-2" class="btn btn-theme mt-2 btn-block">Choose File</a>
+              <label id="pt-testing-filepath-2" class="hidden"></label></div>
+          </div>
+          <div id="pt-file-2-help" class="row help-div">
+            <div class="col-sm">
+              <label>*Upload a data file (.xls, .xlsx, .csv, or .tsv) containing a column labeled “example”, which will
+                contain the text documents. There should be one document per row. See the
+                <a href="examples/step5.csv" download="framing_sample_test.csv">sample file</a>. Note that the
+                unlabeled documents provided should be in the same language as used for your trained model.
+              </label>
+            </div>
+          </div>
+          <hr>
+
+<!--     PT NAME 2     -->
+          <div class="row">
+            <div class="col-sm"><b>Name the file you would like to make predictions on:</b></div>
+            <div class="col-sm"><input type="text" id="pt-name-2" name="pt-name-2" value=""></div>
+          </div>
+          <hr>
+<!--     PT EMAIL 2    -->
+          <div class="row">
+            <div class="col-sm"><b>Email address</b><i onclick="showHelp('pt-email-2')" class="fa fa-info-circle input-help" aria-hidden="true"></i></div>
+            <div class="col-sm"><input type="text" id="pt-email-2" name="pt-email" value=""></div>
+          </div>
+          <div id="pt-email-2-help" class="row help-div">
+            <div class="col-sm">
+              <label>*We will send you an email when the frame prediction is complete and results files are ready to download.
+              </label>
+            </div>
+          </div>
 
           <div class="spacer"></div>
           <div class="row">
             <div class="col-2">
-              <a id="submit5" style="width: 100%; color: white;" class="btn btn-theme mt-2 btn-block">Submit</a>
+              <a id="submit5-2" style="width: 140%; color: white;" class="btn btn-theme mt-2 btn-block">Submit</a>
             </div>
-            <div id="pt-spinner" class="col-10 help-div">
-              <i style="margin-top: 2%;" class="fas fa-spinner fa-spin"></i>
+            <div id="pt-spinner-2" class="col-10 help-div">
+              <i style="margin-left: 3%; margin-top: 2%;" class="fas fa-spinner fa-spin"></i>
             </div>
           </div>
           <br>
-          <div id="error5" class="hidden card card-main" style="background: #ffe3e3">
+          <div id="error5-2" class="hidden card card-main" style="background: #ffe3e3">
             <div class="card-body">
-              <p id="error5-text"  class="new-user"><b>Error panel 5</b></p>
+              <p id="error5-text-2"  class="new-user"><b>Error panel 5</b></p>
             </div>
           </div>
 
         </div>
-
-        <div class="card-footer text-right"></div>
       </div>
+
     </div>
   </div>
 </div>

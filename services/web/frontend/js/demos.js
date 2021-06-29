@@ -607,7 +607,7 @@ function show_gunviolence(val='all'){
         pie_height = 660,
         pie_margin = 110;
 
-    margin = {top: 10, right: 25, bottom: 20, left: 60},
+    margin = {top: 10, right: 25, bottom: 20, left: 75},
         bar_width = 550,
         bar_height = 500;
 
@@ -683,3 +683,15 @@ $(document).ready(function() {
     });
 
 });
+
+
+function toggleArrow(id) {
+    let classes = document.getElementById(id).className.split(' ');
+    if (classes.includes('fa-caret-down')) {
+        $(`#${id}`).removeClass('fa-caret-down')
+            .addClass('fa-caret-up');
+    } else if (classes.includes('fa-caret-up')) {
+        $(`#${id}`).removeClass('fa-caret-up')
+            .addClass('fa-caret-down');
+    }
+}
