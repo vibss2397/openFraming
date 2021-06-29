@@ -69,7 +69,7 @@ function pingClassifierStatus(c_id, t_id) {
                 url: GET_TEST_SET,
                 type: 'GET',
                 success: function (data) {
-                    if (data.inference_status === "completed") {
+                    if (data.status === "completed") {
                         stop = true;
                         window.location.replace(`${BASE_URL}/classifiers/${c_id}/test_sets/${t_id}/predictions`);
                     }
@@ -162,7 +162,7 @@ $(document).ready(function() {
             $('#pt-spinner-2').show();
             $('#submit5-2').addClass("disabled");
 
-            const id = $('#pt-id').val();
+            const id = $("input[type='radio'][name='policyissue']:checked").val();
             submitTestSet(id, '#pt-spinner-2', '#error5-2', 'submit5-2');
 
         }
