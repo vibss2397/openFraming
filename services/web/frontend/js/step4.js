@@ -23,10 +23,12 @@ $(document).ready(function() {
         } else if (document.getElementById("fc-training-invisible").files.length === 0) {
             $('#error4-text').html('Please provide a training file.');
             $('#error4').removeClass('hidden');
-        } else if ($('#fc-labels').val() === "") {
-            $('#error4-text').html('Please provide categories for your classifier.');
-            $('#error4').removeClass('hidden');
-        } else if ($('#fc-email').val() === "") {
+        }
+        // else if ($('#fc-labels').val() === "") {
+        //     $('#error4-text').html('Please provide categories for your classifier.');
+        //     $('#error4').removeClass('hidden');
+        // }
+         else if ($('#fc-email').val() === "") {
             $('#error4-text').html('Please provide an email to send your results to.');
             $('#error4').removeClass('hidden');
 
@@ -36,10 +38,10 @@ $(document).ready(function() {
 
             // POST request for topic model
             const POST_CLASSIFIER = `${BASE_URL}/classifiers/`;
-            const categories = cleanTextboxInput($('#fc-labels').val());
+            // const categories = cleanTextboxInput($('#fc-labels').val());
             let postData = {
                 name: $('#fc-name').val(),
-                category_names: categories,
+                // category_names: categories,
                 notify_at_email: $('#fc-email').val()
             };
             $.ajax({
