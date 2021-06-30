@@ -22,7 +22,8 @@
 
   <!-- LOCAL FILES -->
   <script>
-      function toggleArrow(id) {
+      function toggleArrow(idNum) {
+          let id = `arrow${idNum}`;
           let classes = document.getElementById(id).className.split(' ');
           if (classes.includes('fa-caret-down')) {
               $(`#${id}`).removeClass('fa-caret-down')
@@ -30,6 +31,17 @@
           } else if (classes.includes('fa-caret-up')) {
               $(`#${id}`).removeClass('fa-caret-up')
                   .addClass('fa-caret-down');
+          }
+
+          for (let i = 1; i < 5; i++) {
+              let otherId = `arrow${i}`;
+              if (i !== idNum) {
+                  let otherClasses = document.getElementById(otherId).className.split(' ');
+                  if (otherClasses.includes('fa-caret-up')) {
+                      $(`#${otherId}`).removeClass('fa-caret-up')
+                          .addClass('fa-caret-down');
+                  }
+              }
           }
       }
   </script>
@@ -69,7 +81,7 @@
   <div id="accordion">
 <!--   GENERAL SECTION   -->
     <div class="card">
-      <button onclick="toggleArrow('arrow1')" style="padding: 0;" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+      <button onclick="toggleArrow(1)" style="padding: 0;" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
         <div style="padding: 20px;" class="card-header" id="headingOne">
           <h5 class="mb-0">General <i id="arrow1" class="fa fa-caret-down accordion-arrow" aria-hidden="true"></i></h5>
         </div>
@@ -115,7 +127,7 @@
                     <li>
                       Aky&uumlrek, A. F., Guo, L., Elanwar, R., Betke, M., Ishwar, P. & Wijaya, D. (2020).  Multi-label
                       and multilingual news framing analysis. In D. Jurafsky, J. Chai, N. Schluter, & J. Tetreault (Eds),
-                      <i>Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</i> (pp. 8614–8624).
+                      <i>Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</i> (pp. 8614-8624).
                     </li>
                     <li>
                       Guo, L., Mays, K., Zhang, Y., Wijaya, D. & Betke, M. (2021). What makes gun violence a (less)
@@ -159,7 +171,7 @@
                   In communication research, to frame is "to select some aspects of a perceived reality and make them
                   more salient in a communicating text" (Entman, 1993, p. 52). Like any type of communication, news
                   involves framing. Ideology of a society, ownership of a news organization, media routine, as well as
-                  individual media worker’s preference all play some role, consciously or not, in shaping the news
+                  individual media worker's preference all play some role, consciously or not, in shaping the news
                   content (Shoemaker & Reese, 1996).
                 </li>
               </ul>
@@ -238,7 +250,7 @@
     </div>
 <!--   LDA SECTION   -->
     <div class="card">
-      <button onclick="toggleArrow('arrow2')" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+      <button onclick="toggleArrow(2)" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
         <div style="padding: 20px;" class="card-header" id="headingTwo">
           <h5 class="mb-0">LDA topic modeling (Step 1) <i id="arrow2" class="fa fa-caret-down accordion-arrow" aria-hidden="true"></i></h5>
         </div>
@@ -294,7 +306,7 @@
             <li><b>Q: What is a LDA "topic"? Is it equivalent to "frame"?</b>
               <ul>
                 <li>
-                  An LDA topic is not equivalent to a frame. Topics don’t necessarily correspond to a way of talking
+                  An LDA topic is not equivalent to a frame. Topics don't necessarily correspond to a way of talking
                   about or understanding an issue; they might instead correspond to different events that are covered as
                   part of the issue. We recommend you use the LDA topic modeling results to understand your data and help
                   you decide what frames to be included in the analysis. Oftentimes, the LDA topic modeling analysis can
@@ -308,7 +320,7 @@
     </div>
 <!--   BERT 1 SECTION   -->
     <div class="card">
-      <button onclick="toggleArrow('arrow3')" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+      <button onclick="toggleArrow(3)" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
         <div style="padding: 20px;" class="card-header" id="headingThree">
           <h5 class="mb-0">Train a deep learning model and make predictions (Step 4-5) <i id="arrow3" class="fa fa-caret-down accordion-arrow" aria-hidden="true"></i></h5>
         </div>
@@ -373,7 +385,7 @@
                   understand. A testing set is a dataset that the model uses to figure out how well it has learned this pattern.
                 </li>
                 <li>
-                  Let’s say our goal is to predict the frames of a sample of 10,000 tweets. We will first draw a sample
+                  Let's say our goal is to predict the frames of a sample of 10,000 tweets. We will first draw a sample
                   of 1000 tweets and manually label them. Then we will divide the 1,000 labeled tweets into a training
                   set of 800 tweets and a testing set of 200 tweets. We will train a machine learning model based on
                   learning the patterns of the 800 labeled tweets (the training set), and then use the model to predict
@@ -400,19 +412,19 @@
             <li><b>Q: What is considered "good" model performance? </b>
               <ul>
                 <li>
-                  OFAI provides three evaluation scores—precision, recall, and F-score—to assess the performance of the
+                  OFAI provides three evaluation scores - precision, recall, and F-score - to assess the performance of the
                   trained models. Precision is the ratio of true positives to the total predicted positive observations.
-                  For example, when predicting a given frame “mental health,” the precision score measures out of all the
-                  news headlines predicted as “mental health,” how many of them are indeed coded as “mental health” by
+                  For example, when predicting a given frame "mental health," the precision score measures out of all the
+                  news headlines predicted as "mental health," how many of them are indeed coded as "mental health" by
                   human coders. Recall is the ratio of true positives to all observations in the actual case. In our
-                  running example, it measures out of all the headlines coded as “mental health” by human coders, how
+                  running example, it measures out of all the headlines coded as "mental health" by human coders, how
                   many of them are identified by the model. F-score is the weighted average of precision and recall.
                   If there is more than one frame under consideration (i.e., multiclass prediction), the average precision,
                   recall, and F-score will be reported.  Using 5-fold cross-validation, five sets of precision, recall,
                   and F-score will be averaged and reported.
                 </li>
                 <li>
-                  There are no hard rules to determine “good performance.” In communication research, we usually aim for
+                  There are no hard rules to determine "good performance." In communication research, we usually aim for
                   at least 80% prediction precision and 80% prediction recall. In computer science research what is
                   considered good model performance depends on the difficulty of the task. Generally, a model is
                   considered good if it either outperforms or is comparable to previous state-of-the-art models on the
@@ -454,7 +466,7 @@
     </div>
 <!--   BERT 2 SECTION   -->
     <div class="card">
-      <button onclick="toggleArrow('arrow4')" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+      <button onclick="toggleArrow(4)" style="padding: 0;" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
         <div style="padding: 20px;" class="card-header" id="headingFour">
           <h5 class="mb-0">Use existing deep learning models (Step 5) <i id="arrow4" class="fa fa-caret-down accordion-arrow" aria-hidden="true"></i></h5>
         </div>
@@ -466,7 +478,7 @@
               <ul>
                 <li>
                   That depends on your purposes. Try using the existing models first. Are the frames similar to the
-                  frames you’re thinking about? Do the labels make sense for the work you are trying to do? If not, it
+                  frames you're thinking about? Do the labels make sense for the work you are trying to do? If not, it
                   may be necessary for you to label your own dataset and train a new model. Otherwise, it makes more
                   sense to use the existing model.
                 </li>
