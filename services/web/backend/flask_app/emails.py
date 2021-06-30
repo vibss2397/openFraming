@@ -98,31 +98,31 @@ _email_templates: TT.Final[T.Dict[str, EmailTemplate]] = {
             """<h2>OpenFraming</h2>
 <p>Hi there!</p>
 
-<p>The deep learning classifier you started training on openFraming.org has completed
-training. The name you gave to this classifier was: {classifier_name}. The id
+<p>Thank you for using the service on openframing.org. 
+The deep learning classifier named: <b>{classifier_name}</b> has completed training. The id
 for this classifier is: <b>{classifier_id}</b>.</p>
+<p>Please remember you will need this id to retrieve the model from our website.</p>
 
-<p>Here are the metrics of the classifier we computed using a held out development set.<br>
+<p>Here are the metrics of the classifier we computed using 5-fold cross validation.<br>
 {metrics_html}
 </p>
 
-<p>If you are satisfied with the performance of the frame classification model, 
-If you are satisfied with the performance of the frame classification model here:
-<a href="http://www.openframing.org/playground.html?step=5">openframing.org</a></p>
+<p>If you are satisfied with the performance of the classification model, 
+you can go to the openFraming website and use trained model to predict unlabelled data here:
+<a href="http://www.openframing.org/playground.html?step=5">openframing.org/playground.html</a></p>
 
 <p>Cheers!</p>
 """
         ),
     ),
     "classifier_inference_finished": EmailTemplate(
-        subject="[openFraming] Inference on unlabelled dataset was completed.",
+        subject="[openFraming] Predictions on unlabelled dataset was completed.",
         html_content=(
             """<h2>OpenFraming</h2>
 <p>Hi there!</p>
 
 <p>You requested to run predictions on an unlabelled dataset with the following
 classifier: {classifier_name}.The id for this classifier is: <b>{classifier_id}</b>.
-(Use this id if asked in the portal).</p>
 
 <p>Inference has completed! Please <a href={predictions_url}>click here</a> to download
 your results.</p>
