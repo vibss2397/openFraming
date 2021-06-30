@@ -143,6 +143,10 @@ class Files:
     @classmethod
     def topic_model_topics_by_doc_file(cls, id_: int) -> Path:
         return cls.topic_model_dir(id_) / "topics_by_doc.csv"
+    
+    @classmethod
+    def topic_model_zipped_file(cls, id_: int) -> Path:
+        return cls.topic_model_dir(id_) / "combined.zip"
 
     @staticmethod
     def _hash_list(ls: T.List[str]) -> str:

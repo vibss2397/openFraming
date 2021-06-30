@@ -1,7 +1,7 @@
 This URL refers to a post request for creating a test set
 ---
   tags:
-    - classifier test_set
+    - classifier Predictions
   parameters:
     - name: id
       in: path
