@@ -146,7 +146,7 @@ with:</p>
 {metrics_html}
 </p>
 
-<p>Topic modeling has completed! Please <a href={topic_model_preview_url}>click here</a> to
+<p>Topic modeling has completed! Please <a href="http://www.openframing.org/playground.html?step=1&id={topic_model_id}">click here</a> to
 view your topic modeling results.  On that page, you'll be able to preview the topics
 discovered, and give the topic models names. You'll of course, be able to download the
 results of the topic modeling.</p>
