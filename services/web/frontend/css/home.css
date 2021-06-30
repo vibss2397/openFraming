@@ -31,6 +31,7 @@ p {
 
 .how-btn-col {
     margin-top: 1.5%;
+    margin-right: 2%;
     text-align: center;
 }
 
@@ -72,7 +73,8 @@ p {
 
 .what-text-col {
     margin-top: 3%;
-    margin-left: 5%;
+    /*margin-left: 8%;*/
+    margin-right: 5%;
 }
 
 .what-img-col {
@@ -80,6 +82,20 @@ p {
     margin-left: 3%;
     text-align: center;
 }
+
+/*.what-text-col {*/
+/*    margin-top: 3%;*/
+/*    margin-left: 0;*/
+/*    !*margin-left: 5%;*!*/
+/*}*/
+
+/*.what-img-col {*/
+/*    margin-bottom: 2%;*/
+/*    !*margin-left: 0%;*!*/
+/*    !*margin-right: 10%;*!*/
+/*    margin-right: 0;*/
+/*    text-align: center;*/
+/*}*/
 
 /* custom button color */
 .btn-theme{color:#fff;background-color:rebeccapurple;border-color:rebeccapurple}
@@ -131,6 +147,13 @@ p {
 
 #pubs-section p {
     font-size: 16px;
+}
+
+#what-section img {
+    min-width: 200px !important;
+    max-width: 350px !important;
+    width: 85%;
+    /*height: 5%;*/
 }
 
 
