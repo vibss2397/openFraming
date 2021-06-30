@@ -1,7 +1,7 @@
 This URL refers to a get request for downloading the updated file with predictions for the test set
 ---
   tags:
-    - classifier test_set
+    - classifier Predictions
   parameters:
     - name: classifier_id
       in: path

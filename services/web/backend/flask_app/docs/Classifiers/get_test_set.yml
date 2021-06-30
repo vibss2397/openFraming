@@ -1,7 +1,7 @@
 This URL refers to a get request for getting details of test files(without predictions) related to a single classifier instance.
 ---
   tags:
-    - classifier test_set
+    - classifier Predictions
   parameters:
     - name: classifier_id
       in: path

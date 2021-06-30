@@ -145,8 +145,6 @@ class QueueManager(object):
             do_lemmatizing=do_lemmatizing,
             min_word_length=min_word_length
         )
-        app.logger.info('GGGGGGGGG---------------------')
-        app.logger.info(topic_mdl_processing_temp['min_word_length'])
         self.topic_models_queue.enqueue(
             "flask_app.modeling.tasks.do_topic_model_related_task",
             TopicModelTrainingTaskArgs(
