@@ -64,10 +64,10 @@
       <a class="nav-link" href="faq.html">FAQ</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="https://github.com/vibss2397/openFraming/tree/ui-revamp">Source Code</a>
+      <a target="_blank" class="nav-link" href="https://github.com/vibss2397/openFraming/tree/ui-revamp">Source Code</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="http://www.openframing.org:5000/docs/">API</a>
+      <a target="_blank" class="nav-link" href="http://www.openframing.org:5000/docs/">API</a>
     </li>
   </ul>
 </nav>
@@ -193,20 +193,23 @@
                 </li>
               </ul>
             </li>
-            <!--    TODO: Update with correct time estimate        -->
             <li><b>Q: How long will it take to complete the analysis?</b>
               <ul>
                 <li>
-                  The larger your dataset, the more time it will need. Our current hardware requires a little longer than 30
-                  minutes to train on 1100 documents. Generally, the proportionality is linear(ie, you can double the time
-                  required for double the number of documents).
+                  For topic modeling analysis (Step 1), our current system requires around 15 minutes to train on 1,000 documents.
+                </li>
+                <li>
+                  For training a deep learning model (Step 4), it will take around 11 hours to train on 1,000 documents.
+                </li>
+                <li>
+                  Generally, the time increase is linear with the number of documents for training.
                 </li>
               </ul>
             </li>
             <li><b>Q: Can I get access to your code?</b>
               <ul>
                 <li>
-                  Yes, you can find our code on our <a href="https://github.com/vibss2397/openFraming/tree/ui-revamp">Github page</a>.
+                  Yes, you can find our code on our <a target="_blank" href="https://github.com/vibss2397/openFraming/tree/ui-revamp">Github page</a>.
                 </li>
               </ul>
             </li>
@@ -215,7 +218,7 @@
                 <li>
                   You may choose to customize some parameters through our web-based system (e.g., the number of the LDA
                   topics). In order to further fine-tune the algorithms, you will need to have some programming experience
-                  and our code can be found on our <a href="https://github.com/vibss2397/openFraming/tree/ui-revamp">Github page</a>.
+                  and our code can be found on our <a target="_blank" href="https://github.com/vibss2397/openFraming/tree/ui-revamp">Github page</a>.
                 </li>
               </ul>
             </li>
@@ -229,7 +232,7 @@
                     </li>
                     <li>
                       You can use our LDA topic modeling tool (<b>Step 1</b>) to conduct a topic modeling analysis of
-                      any issue of your interest. See the <a href="demos.html">demo</a> here.
+                      any issue of your interest. See the <a target="_blank" href="demos.html">demo</a> here.
                     </li>
                     <li>
                       If you have a labeled dataset to begin with (the labels can be frames, sentiment, topics, etc.),
@@ -258,7 +261,7 @@
       <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
         <div class="card-body">
           <ul>
-            <li><a id="what-lda"><b>Q: What is LDA topic modeling?</b></a>
+            <li><b>Q: What is LDA topic modeling?</b>
               <ul>
                 <li>
                   The Latent Dirichlet Allocation (LDA) based topic modeling is a popular example of unsupervised machine
@@ -368,11 +371,12 @@
             </li>
             <li><b>Q: How many labeled documents should I provide? </b>
               <ul>
-                <li> <!-- TODO: add citation-->
+                <li>
                   This is not an easy question to answer as it depends on how <i>hard</i> the task is from a deep
                   learning perspective, and how much performance is needed. The rule of thumb in deep learning is, the
                   more the merrier. As a reference point however, you can keep in mind that on the Gun Violence Frames
-                  Corpus (citation), using around 1,300 documents, we obtained 82-84% accuracy to classify 9 frames.
+                  Corpus (<a target="_blank" href="https://derrywijaya.github.io/GVFC">https://derrywijaya.github.io/GVFC</a>),
+                  using around 1,300 documents, we obtained 82-84% accuracy to classify 9 frames.
                 </li>
               </ul>
             </li>
@@ -394,7 +398,7 @@
                   performance. If the model performance is good, we will then use the model to predict the remaining
                   unlabeled tweets (9,000).
                 </li>
-                <img src="images/bert_q_a.png" alt="q_a" style="width: 100%">
+                <img class="center" src="images/bert_q_a.png" alt="q_a">
               </ul>
             </li>
             <li><b>Q: What is K-fold cross-validation?</b>
@@ -474,16 +478,6 @@
       <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
         <div class="card-body">
           <ul>
-            <li><b>Q: I have a sample of labeled data that pertains to one of the topics. Should I use the existing models, or is it better to train a new model?</b>
-              <ul>
-                <li>
-                  That depends on your purposes. Try using the existing models first. Are the frames similar to the
-                  frames you're thinking about? Do the labels make sense for the work you are trying to do? If not, it
-                  may be necessary for you to label your own dataset and train a new model. Otherwise, it makes more
-                  sense to use the existing model.
-                </li>
-              </ul>
-            </li>
             <li><b>Q: I used one of the models to predict frame labels for my data, and I found the labels assigned to some documents do not make sense. Why does that happen?</b>
               <ul>
                 <li>
@@ -505,6 +499,19 @@
                   want to generate your own model.
                 </li>
               </ul>
+            </li>
+            <li><b>Q: Can you provide more information about the four pre-trained models?</b>
+              <ul>
+                <li>
+                  To train the four pre-trained models on gun violence, immigration, tobacco, and same sex marriage
+                  issues, we apply our Step 4 on the frame-labeled data on US gun violence issue (obtained from the Gun
+                  Violence Frame Corpus (GVFC) dataset: <a target="_blank" href="https://derrywijaya.github.io/GVFC">https://derrywijaya.github.io/GVFC</a>)
+                  and the frame-labeled data on immigration, tobacco, and same sex marriage issues (obtained from
+                  the Media Frame Corpus (MFC) dataset:
+                  <a target="_blank" href="https://github.com/dallascard/media_frames_corpus">https://github.com/dallascard/media_frames_corpus</a>).
+                </li>
+              </ul>
+
             </li>
           </ul>
         </div>
