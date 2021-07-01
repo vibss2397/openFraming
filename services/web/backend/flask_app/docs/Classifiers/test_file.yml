@@ -1,7 +1,7 @@
 This URL refers to a post request for uploading training file for a classifier.
 ---
   tags:
-    - classifier test_set
+    - classifier Predictions
   parameters:
     - name: id
       in: path

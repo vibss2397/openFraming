@@ -7,6 +7,8 @@ import typing as T
 from collections import Counter
 from pathlib import Path
 import os
+import io
+import zipfile
 
 import pandas as pd  # type: ignore
 import peewee as pw
@@ -315,7 +317,7 @@ class ClassifiersTrainingFile(ClassifierRelatedResource):
         table_headers, table_data, unique_category_names = self._validate_training_file_and_get_data(
             file_
         )
-        app.logger.info(unique_category_names)
+        # app.logger.info(unique_category_names)
         file_.close()
         """Old version
         # Split into train and dev
@@ -463,7 +465,8 @@ class ClassifierTestSetRelatedResource(ClassifierRelatedResource):
 class OneClassifierTestSet(ClassifierTestSetRelatedResource):
 
     url = "/classifiers/<int:classifier_id>/test_sets/<int:test_set_id>"
-
+    
+    @swag_from('./docs/Classifiers/get_test_set.yml')
     def get(self, classifier_id: int, test_set_id: int) -> ClassifierTestSetStatusJson:
         test_set = get_object_or_404(models.TestSet, models.TestSet.id_ == test_set_id)
         if test_set.classifier.classifier_id != classifier_id:
@@ -488,7 +491,7 @@ class ClassifiersTestSets(ClassifierTestSetRelatedResource):
             required=True,
             location="json",
         )
-    @swag_from('./docs/Classifiers/get_test_set.yml')
+    @swag_from('./docs/Classifiers/get_test_sets.yml')
     def get(self, classifier_id: int) -> T.List[ClassifierTestSetStatusJson]:
         clsf = get_object_or_404(
             models.Classifier, models.Classifier.classifier_id == classifier_id
@@ -1205,7 +1208,7 @@ class TopicModelsTopicsByDoc(TopicModelRelatedResource, SupportSpreadsheetFileTy
             topics_by_doc_with_file_type = self._get_cached_version_with_file_type(
                 topics_by_doc_file, file_type_with_dot
             )
-            name_for_file = f"Topic_model_{topic_mdl.name}-keywords{file_type_with_dot}"
+            name_for_file = f"Topic_model_{topic_mdl.name}-example_docs{file_type_with_dot}"
             return send_file(
                 topics_by_doc_with_file_type,
                 as_attachment=True,
@@ -1257,6 +1260,110 @@ class TopicModelsTopicsByDoc(TopicModelRelatedResource, SupportSpreadsheetFileTy
             )
 
         return topics_by_doc_file_with_topic_names
+
+class TopicModelPreviewZipped(TopicModelRelatedResource):
+    url = "/topic_models/<int:topic_model_id>/topic_zipped"
+
+    def __init__(self) -> None:
+        self.reqparse = reqparse.RequestParser()
+
+    @swag_from('./docs/topic_models/topics_zipped.yml')
+    def get(self, topic_model_id: int) -> Response:
+        topic_mdl = get_object_or_404(
+            models.TopicModel, models.TopicModel.id_ == topic_model_id
+        )
+        if topic_mdl.lda_set is None:
+            raise NotFound(
+                "A training set has not been uploaded to this topic model yet. Please upload training data first."
+            )
+        if not topic_mdl.lda_set.lda_completed:
+            raise BadRequest("Training this topic model has not been completed yet.")
+        else:
+            args = self.reqparse.parse_args()
+            assert topic_mdl.topic_names is not None  # We assign default topic names
+            combined_file = self._get_combined_zip_file(
+                topic_mdl
+            )
+            file_type_with_dot = ".zip"
+            # topics_by_doc_with_file_type = self._get_cached_version_with_file_type(
+            #     combined_file, file_type_with_dot
+            # )
+            name_for_file = f"Topic_model_{topic_mdl.name}-combined{file_type_with_dot}"
+            return send_file(
+                combined_file,
+                as_attachment=True,
+                attachment_filename=name_for_file,
+            )
+
+    @classmethod
+    def _get_combined_zip_file(
+        cls, topic_mdl: models.TopicModel
+    ) -> Path:
+        topic_mdl = cls._ensure_topic_names(topic_mdl)
+        """This part is concerned with getting keywords.csv file
+        """
+        keywords_file = utils.Files.topic_model_keywords_file(topic_mdl.id_)
+        keywords_file_with_topic_names = utils.Files.topic_model_keywords_with_topic_names_file(
+            topic_mdl.id_, topic_mdl.topic_names
+        )
+        if not keywords_file_with_topic_names.exists():
+            keywords_df = pd.read_csv(keywords_file, header=0, index_col=0)
+            # Sanity check
+            pd.testing.assert_index_equal(
+                keywords_df.columns,
+                pd.Index([f"{i}" for i in range(topic_mdl.num_topics)]),
+            )
+
+            keywords_df.columns = pd.Index(topic_mdl.topic_names)
+        else:
+            keywords_df = pd.read_csv(keywords_file_with_topic_names)
+
+        """This part is concerned with getting topic_docs.csv file
+        """
+        topics_by_doc_file_with_topic_names = utils.Files.topic_model_topics_by_doc_with_topic_names_file(
+            topic_mdl.id_, topic_mdl.topic_names
+        )
+        if not topics_by_doc_file_with_topic_names.exists():
+            topics_by_doc_file = utils.Files.topic_model_topics_by_doc_file(
+                topic_mdl.id_
+            )
+            topics_by_doc_df = pd.read_csv(topics_by_doc_file, header=0, index_col=0)
+            pd.testing.assert_index_equal(
+                topics_by_doc_df.columns,
+                pd.Index(
+                    [Settings.CONTENT_COL, Settings.STEMMED_CONTENT_COL]
+                    + [
+                        Settings.PROBAB_OF_TOPIC_TEMPLATE.format(
+                            Settings.DEFAULT_TOPIC_NAME_TEMPLATE.format(topic_num)
+                        )
+                        for topic_num in range(1, topic_mdl.num_topics + 1)
+                    ]
+                    + [Settings.MOST_LIKELY_TOPIC_COL]
+                ),
+            )
+
+            topics_by_doc_df.columns = pd.Index(
+                [Settings.CONTENT_COL, Settings.STEMMED_CONTENT_COL]
+                + [
+                    Settings.PROBAB_OF_TOPIC_TEMPLATE.format(topic)
+                    for topic in topic_mdl.topic_names
+                ]
+                + [Settings.MOST_LIKELY_TOPIC_COL]
+            )
+        else:
+            topics_by_doc_df = pd.read_csv(topics_by_doc_file_with_topic_names)
+
+        """This part will combine both the csv files into a zip file
+        """
+        combined_zip_file = utils.Files.topic_model_zipped_file(topic_mdl.id_)
+        if not combined_zip_file.exists():
+            with zipfile.ZipFile(combined_zip_file, 'w') as zi:
+                keywords_io = keywords_df.to_csv(index=False).encode()
+                topic_by_doc_io = topics_by_doc_df.to_csv(index=False).encode()
+                zi.writestr("{}.csv".format('keywords_file_with_topic_names'), keywords_io)
+                zi.writestr("{}.csv".format('topics_by_doc_file_with_topic_names'), topic_by_doc_io)
+        return combined_zip_file
+
 
 
 # We will initialize database manually in here, so we are not going to do
@@ -1360,6 +1467,7 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
         TopicModelsTopicsPreview,
         TopicModelsTopicsByDoc,
         TopicModelsKeywords,
+        TopicModelPreviewZipped
     )
 
     for resource_cls in lsresource_cls:
