@@ -5,56 +5,64 @@
 
 
 function submitTestSet(id, spinnerId, errorId, submitId) {
-    // POST request for topic model
-    const POST_TEST_SET = `${BASE_URL}/classifiers/${id}/test_sets/`;
-    let postData = {
-        test_set_name: $('#pt-name').val(),
-        notify_at_email: $('#pt-email').val()
-    };
-    $.ajax({
-        url: POST_TEST_SET,
-        type: 'POST',
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON.stringify(postData),
-        success: function (data) {
-            console.log('success in classifier test set POST');
-            // POST request for training file
-            let c_id = data.classifier_id;
-            let t_id = data.test_set_id;
-            const POST_PT_TESTING_FILE = `${BASE_URL}/classifiers/${c_id}/test_sets/${t_id}/file`;
-            let fileFD = new FormData();
-            fileFD.append('file', document.getElementById("pt-testing-invisible").files[0]);
+    let isNum = /^\d+$/.test(id);
+    if (isNum === false) {
+        $('#error5-text').html('Please enter a numeric value for your ID');
+        $('#error5').removeClass('hidden');
+    } else {
+        $('#error5').addClass('hidden');
 
-            $.ajax({
-                url: POST_PT_TESTING_FILE,
-                data: fileFD,
-                type: 'POST',
-                processData: false,
-                contentType: false,
-                success: function(){
-                    console.log('STEP 5 - success in testing file POST');
-                    pingClassifierStatus(c_id, t_id);
-                    $(spinnerId).hide();
-                    $(submitId).removeClass("disabled");
-                },
-                error: function (xhr, status, err) {
-                    console.log(xhr.responseText);
-                    let error = getErrorMessage(JSON.parse(xhr.responseText).message);
-                    $(errorId).html(`An error occurred while uploading your file: ${error}`).removeClass('hidden');
-                    $(spinnerId).hide();
-                    $(submitId).removeClass("disabled");
-                }
-            });
-        },
-        error: function (xhr, status, err) {
-            console.log(xhr.responseText);
-            let error = getErrorMessage(JSON.parse(xhr.responseText).message);
-            $(errorId).html(`An error occurred while creating the test set: ${error}`).removeClass('hidden');
-            $(spinnerId).hide();
-            $(submitId).removeClass("disabled");
-        }
-    });
+        // POST request for topic model
+        const POST_TEST_SET = `${BASE_URL}/classifiers/${id}/test_sets/`;
+        let postData = {
+            test_set_name: $('#pt-name').val(),
+            notify_at_email: $('#pt-email').val()
+        };
+        $.ajax({
+            url: POST_TEST_SET,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(postData),
+            success: function (data) {
+                console.log('success in classifier test set POST');
+                // POST request for training file
+                let c_id = data.classifier_id;
+                let t_id = data.test_set_id;
+                const POST_PT_TESTING_FILE = `${BASE_URL}/classifiers/${c_id}/test_sets/${t_id}/file`;
+                let fileFD = new FormData();
+                fileFD.append('file', document.getElementById("pt-testing-invisible").files[0]);
+
+                $.ajax({
+                    url: POST_PT_TESTING_FILE,
+                    data: fileFD,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        console.log('STEP 5 - success in testing file POST');
+                        pingClassifierStatus(c_id, t_id);
+                        $(spinnerId).hide();
+                        $(submitId).removeClass("disabled");
+                    },
+                    error: function (xhr, status, err) {
+                        console.log(xhr.responseText);
+                        let error = getErrorMessage(JSON.parse(xhr.responseText).message);
+                        $(errorId).html(`An error occurred while uploading your file: ${error}`).removeClass('hidden');
+                        $(spinnerId).hide();
+                        $(submitId).removeClass("disabled");
+                    }
+                });
+            },
+            error: function (xhr, status, err) {
+                console.log(xhr.responseText);
+                let error = getErrorMessage(JSON.parse(xhr.responseText).message);
+                $(errorId).html(`An error occurred while creating the test set: ${error}`).removeClass('hidden');
+                $(spinnerId).hide();
+                $(submitId).removeClass("disabled");
+            }
+        });
+    }
 }
 
 

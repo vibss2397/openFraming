@@ -23,7 +23,7 @@ The link above has guides on how to install Docker on the most popular platforms
  3. `docker-compose build`
  4. `docker-compose up`
  
- You might have to add `sudo` at the beginning of commands at step 3 and 4.
+ You might have to add `sudo` at the beginning of commands at step 3 and 4 if using linux/macOS.
 
 
 ## E-mails
@@ -49,22 +49,11 @@ sudo -E docker-compose up
 
 You can check the following YouTube video for a quick demonstration of our Website's features.
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/u8SJAZ-EbgU/0.jpg)](http://www.youtube.com/watch?v=u8SJAZ-EbgU "OpenFraming video tutorial")
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/u8SJAZ-EbgU/0.jpg)]("https://www.youtube.com/watch?v=GGxcEFsaV7o")
 
 ## Getting help
 
 If you have any question, concern, or bug report, please file an issue in this repository's Issue Tracker and we will respond accordingly.
-
-
-## Citation
-```
-@article{smith2020openframing,
-  title={OpenFraming: We brought the ML; you bring the data. Interact with your data and discover its frames},
-  author={Smith, Alyssa and Tofu, David Assefa and Jalal, Mona and Halim, Edward Edberg and Sun, Yimeng and Akavoor, Vidya and Betke, Margrit and Ishwar, Prakash and Guo, Lei and Wijaya, Derry},
-  journal={arXiv preprint arXiv:2008.06974},
-  year={2020}
-}
-```
 
 ## Funding
 
@@ -80,4 +69,4 @@ We are truly grateful to Gerard Shockley, Boston University Cloud Broker, for he
 
 ## Credits
 
-[Alyssa Smith](https://www.linkedin.com/in/alyssa-smith-2463b7a0)<sup>&ast;</sup>, [David Assefa Tofu](https://davidatbu.github.io)<sup>&ast;</sup>, [Mona Jalal](http://monajalal.com)<sup>&ast;</sup>, [Edward Edberg Halim](https://id.linkedin.com/in/edward-edberg-halim-241014111), [Yimeng Sun](https://www.linkedin.com/in/yimengsun0104), [Vidya Prasad Akavoor](https://www.linkedin.com/in/vidya-akavoor), [Margrit Betke](http://www.cs.bu.edu/~betke), [Prakash Ishwar](http://sites.bu.edu/pi), [Lei Guo](https://www.leiguo.net), [Derry Wijaya](https://derrywijaya.github.io)
+[Vibhu Bhatia](https://vibss2397.github.io), [Vidya Prasad Akavoor](https://www.linkedin.com/in/vidya-akavoor), [Sejin Paik](http://www.google.com), [Lei Guo](https://www.leiguo.net), [Mona Jalal](http://monajalal.com)<sup>&ast;</sup>, [Alyssa Smith](https://www.linkedin.com/in/alyssa-smith-2463b7a0)<sup>&ast;</sup>, [David Assefa Tofu](https://davidatbu.github.io)<sup>&ast;</sup>, [Edward Edberg Halim](https://id.linkedin.com/in/edward-edberg-halim-241014111), [Yimeng Sun](https://www.linkedin.com/in/yimengsun0104),  [Margrit Betke](http://www.cs.bu.edu/~betke), [Prakash Ishwar](http://sites.bu.edu/pi), [Derry Wijaya](https://derrywijaya.github.io)
