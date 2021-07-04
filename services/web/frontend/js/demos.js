@@ -685,7 +685,8 @@ $(document).ready(function() {
 });
 
 
-function toggleArrow(id) {
+function toggleArrow(idNum) {
+    let id = `arrow${idNum}`;
     let classes = document.getElementById(id).className.split(' ');
     if (classes.includes('fa-caret-down')) {
         $(`#${id}`).removeClass('fa-caret-down')
@@ -693,5 +694,16 @@ function toggleArrow(id) {
     } else if (classes.includes('fa-caret-up')) {
         $(`#${id}`).removeClass('fa-caret-up')
             .addClass('fa-caret-down');
+    }
+
+    for (let i = 1; i < 7; i++) {
+        let otherId = `arrow${i}`;
+        if (i !== idNum) {
+            let otherClasses = document.getElementById(otherId).className.split(' ');
+            if (otherClasses.includes('fa-caret-up')) {
+                $(`#${otherId}`).removeClass('fa-caret-up')
+                    .addClass('fa-caret-down');
+            }
+        }
     }
 }

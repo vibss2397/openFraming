@@ -6,25 +6,33 @@
 
 function getTMPreview(id) {
     console.log(id);
-    const GET_ONE_TOPIC_MDL = BASE_URL + `/topic_models/${id}/topics/preview`;
-    $.ajax({
-        url: GET_ONE_TOPIC_MDL,
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-            $('#preview-info').removeClass('hidden');
-            $('#tm-prev-name').empty().append(data.topic_model_name);
-            $('#tm-prev-num').empty().append(data.num_topics);
-            $('#previews').empty();
-            showPreviews(data);
-        },
-        error: function (xhr, status, err) {
-            console.log(xhr.responseText);
-            let error = getErrorMessage(JSON.parse(xhr.responseText).message);
-            $('#preview-info').addClass('hidden');
-            $('#error2').html(`An error occurred while finding your topic model: ${error}`).removeClass('hidden');
-        },
-    });
+    let isNum = /^\d+$/.test(id);
+    if (isNum === false) {
+        $('#error2-text').html('Please enter a numeric value for your ID');
+        $('#error2').removeClass('hidden');
+    } else {
+        $('#error2').addClass('hidden');
+        const GET_ONE_TOPIC_MDL = BASE_URL + `/topic_models/${id}/topics/preview`;
+        $.ajax({
+            url: GET_ONE_TOPIC_MDL,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                $('#preview-info').removeClass('hidden');
+                $('#tm-prev-name').empty().append(data.topic_model_name);
+                $('#tm-prev-num').empty().append(data.num_topics);
+                $('#previews').empty();
+                $('#get-results').attr('href', `http://www.openframing.org:5000/api/topic_models/${id}/topic_zipped`);
+                showPreviews(data);
+            },
+            error: function (xhr, status, err) {
+                console.log(xhr.responseText);
+                let error = getErrorMessage(JSON.parse(xhr.responseText).message);
+                $('#preview-info').addClass('hidden');
+                $('#error2').html(`An error occurred while finding your topic model: ${error}`).removeClass('hidden');
+            },
+        });
+    }
 }
 
 /* * * * * * */
