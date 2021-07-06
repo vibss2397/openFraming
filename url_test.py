@@ -40,6 +40,19 @@ res = requests.post('http://0.0.0.0:5000/api/classifiers/4/test_sets/', json=dat
 print(res.text)
 """
 
+# /api/classifiers/1/set_status_to_be_completed post
+
+category_names = ['Politics', '2nd Amendment rights', 'Gun control', 
+    'Public opinion', 'Mental health', 'School or public space safety', 
+    'Society', 'Race', 'Economic consequences']
+metrics = ['0.7', '0.4', '0.3', '0.2']
+data = {
+    "category_names": category_names, "metrics": metrics
+}
+res = requests.post('http://0.0.0.0:5000/api/classifiers/1/set_status_to_be_completed', json=data)
+print(res.text)
+
+
 # /api/classifiers/1/test_sets get
 """
 res = requests.get('http://0.0.0.0:5000/api/classifiers/7/test_sets')

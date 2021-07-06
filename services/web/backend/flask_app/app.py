@@ -134,6 +134,14 @@ class BaseResource(Resource):
         if "," in val:
             raise ValueError("can't contain commas.")
         return val
+    
+    @staticmethod
+    def _validate_serializable_list_value2(val: T.Any) -> float:
+        if not isinstance(val, float):
+            raise ValueError("must be float")
+        if "," in val:
+            raise ValueError("can't contain commas.")
+        return val
 
     @staticmethod
     def _validate_email(val: T.Any) -> str:
@@ -572,6 +580,66 @@ class ClassifiersTestSetsPredictions(
                 attachment_filename=name_for_file,
             )
 
+class ClassifierSetStatusCompleted(ClassifierTestSetRelatedResource):
+    url = "/classifiers/<int:classifier_id>/set_status_to_be_completed"
+
+    def __init__(self) -> None:
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument(
+            name="category_names",
+            type=self._validate_serializable_list_value,
+            action="append",
+            required=False,
+            location="json",
+            help="The category names must be a list of strings that don't contain commas within them..",
+        )
+        self.reqparse.add_argument(
+            name="metrics",
+            type=self._validate_serializable_list_value,
+            action="append",
+            required=False,
+            location="json",
+            help="The metrics must be a list of strings that don't contain commas within them..",
+        )
+    
+    def post(self, classifier_id: int) -> Response:
+        args = self.reqparse.parse_args()
+        category_names = args["category_names"] if args['category_names'] is not None else None
+        metrics = [float(ele) for ele in args["metrics"]] if args['metrics'] is not None else None
+        try:
+            classifier = models.Classifier.get(
+                models.Classifier.classifier_id == classifier_id
+            )
+        except models.Classifier.DoesNotExist:
+            raise NotFound("classifier not found.")
+        
+        if classifier.train_set is not None:
+            app.logger.info("This classifier already has a training set.")
+            return self._classifier_status(classifiers)
+        
+        classifier.train_set = models.LabeledSet()
+        classifier.train_set.training_or_inference_completed = True
+        if metrics is None:
+            metrics2 = {
+                'accuracy': 0.8,
+                'macro_f1_score': 0.2,
+                'macro_precision': 0.4,
+                'macro_recall': 0.44
+            }
+        else:
+            metrics2 = {
+                'accuracy': metrics[0],
+                'macro_f1_score': metrics[1],
+                'macro_precision': metrics[2],
+                'macro_recall': metrics[3]
+            }
+        if category_names is not None:
+            classifier.category_names = category_names
+        classifier.train_set.metrics = models.ClassifierMetrics(**metrics2)
+        classifier.train_set.save()
+        classifier.save()
+        return self._classifier_status(classifier)
+        
 
 class ClassifiersTestSetsFile(ClassifierTestSetRelatedResource):
     """Upload training data to the classifier."""
@@ -1460,6 +1528,7 @@ def create_app(logging_level: int = logging.WARNING) -> Flask:
         OneClassifierTestSet,
         ClassifiersTestSetsFile,
         ClassifiersTestSetsPredictions,
+        ClassifierSetStatusCompleted,
         TopicModels,
         OneTopicModel,
         TopicModelsTrainingFile,
