@@ -11,9 +11,9 @@ category_names = ['Politics', '2nd Amendment rights', 'Gun control',
     'Society', 'Race', 'Economic consequences']
 
 data = {
-    "name": "sample classifier", "notify_at_email": "vibs97@bu.edu"
+    "name": "samesex marriage classifier", "notify_at_email": "vibs97@bu.edu"
     }
-res = requests.post('http://0.0.0.0:5000/api/classifiers/', json=data)
+res = requests.post('http://www.openframing.org:5000/api/classifiers/', json=data)
 print(res.text)
 """
 
@@ -41,17 +41,15 @@ print(res.text)
 """
 
 # /api/classifiers/1/set_status_to_be_completed post
-
-category_names = ['Politics', '2nd Amendment rights', 'Gun control', 
-    'Public opinion', 'Mental health', 'School or public space safety', 
-    'Society', 'Race', 'Economic consequences']
-metrics = ['0.7', '0.4', '0.3', '0.2']
+"""
+category_names = ['CapacityandResources', 'CrimeandPunishment', 'CulturalIdentity', 'Economic', 'Externalregulationandreputation', 'FairnessandEquality', 'HealthandSafety', 'LegalityConstitutionalityJurisdiction', 'Morality', 'Other', 'PolicyPrescriptionandEvaluation', 'Political', 'PublicSentiment', 'Qualityoflife', 'SecurityandDefense']
+metrics = ['0.5612097715404887', '0.529504503113787', '0.5277055334331522', '0.5379205327369124']
 data = {
     "category_names": category_names, "metrics": metrics
 }
-res = requests.post('http://0.0.0.0:5000/api/classifiers/1/set_status_to_be_completed', json=data)
+res = requests.post('http://www.openframing.org:5000/api/classifiers/3/set_status_to_be_completed', json=data)
 print(res.text)
-
+"""
 
 # /api/classifiers/1/test_sets get
 """

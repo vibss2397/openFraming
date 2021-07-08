@@ -636,6 +636,7 @@ class ClassifierSetStatusCompleted(ClassifierTestSetRelatedResource):
         if category_names is not None:
             classifier.category_names = category_names
         classifier.train_set.metrics = models.ClassifierMetrics(**metrics2)
+        classifier.train_set.metrics.save()
         classifier.train_set.save()
         classifier.save()
         return self._classifier_status(classifier)
