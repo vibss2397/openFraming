@@ -11,7 +11,7 @@ category_names = ['Politics', '2nd Amendment rights', 'Gun control',
     'Society', 'Race', 'Economic consequences']
 
 data = {
-    "name": "samesex marriage classifier", "notify_at_email": "vibs97@bu.edu"
+    "name": "samesex classifier", "notify_at_email": "vibs97@bu.edu"
     }
 res = requests.post('http://www.openframing.org:5000/api/classifiers/', json=data)
 print(res.text)
@@ -42,8 +42,8 @@ print(res.text)
 
 # /api/classifiers/1/set_status_to_be_completed post
 """
-category_names = ['CapacityandResources', 'CrimeandPunishment', 'CulturalIdentity', 'Economic', 'Externalregulationandreputation', 'FairnessandEquality', 'HealthandSafety', 'LegalityConstitutionalityJurisdiction', 'Morality', 'Other', 'PolicyPrescriptionandEvaluation', 'Political', 'PublicSentiment', 'Qualityoflife', 'SecurityandDefense']
-metrics = ['0.5612097715404887', '0.529504503113787', '0.5277055334331522', '0.5379205327369124']
+category_names = ['Economicconsequences', 'Gun2ndAmendmentrights', 'Guncontrolregulation', 'Mentalhealth', 'Politics', 'Publicopinion', 'Raceethnicity', 'Schoolorpublicspacesafety', 'Societyculture']
+metrics = ['0.9261538461538462', '0.879877077719961', '0.8812814391247712', '0.8831354650027471']
 data = {
     "category_names": category_names, "metrics": metrics
 }
