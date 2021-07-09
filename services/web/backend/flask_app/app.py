@@ -134,7 +134,7 @@ class BaseResource(Resource):
         if "," in val:
             raise ValueError("can't contain commas.")
         return val
-    
+
     @staticmethod
     def _validate_serializable_list_value2(val: T.Any) -> float:
         if not isinstance(val, float):

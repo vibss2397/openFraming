@@ -17,7 +17,7 @@ from transformers import Trainer
 from transformers import TrainingArguments  # type: ignore
 from transformers.tokenization_utils import PreTrainedTokenizer
 from transformers.trainer_utils import PredictionOutput
-from flask import current_app as app
+
 from flask_app.modeling.lda import CSV_EXTENSIONS
 from flask_app.settings import Settings
 
@@ -315,7 +315,7 @@ class ClassifierModel(object):
         split_counter = 0
 
         for train_indices, dev_indices in ss.split(X, y):
-            app.logger.info('split '+ str(split_counter + 1)+ ' out of '+ str(self.num_splits)+ '-----')
+            app.logger.info('split '+split_counter + 1+' out of '+ self.num_split '-----')
 
             data_train = pd.DataFrame([train_dset_table[i] for i in train_indices], 
                 columns = train_dset_headers)

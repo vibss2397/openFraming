@@ -73,7 +73,7 @@ class QueueManager(object):
         dev_file: str,
         cache_dir: str,
         output_dir: str,
-        num_train_epochs: float = 3.0,
+        num_train_epochs: int = 3,
     ) -> None:
         app.logger.info("Enqueued classifier training")
         app.logger.info('hererer')
