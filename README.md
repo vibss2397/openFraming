@@ -49,7 +49,7 @@ sudo -E docker-compose up
 
 You can check the following YouTube video for a quick demonstration of our Website's features.
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/u8SJAZ-EbgU/0.jpg)]("https://www.youtube.com/watch?v=GGxcEFsaV7o")
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/u8SJAZ-EbgU/0.jpg)](https://www.youtube.com/watch?v=GGxcEFsaV7o)
 
 ## Getting help
 
